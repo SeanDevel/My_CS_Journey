@@ -1,0 +1,557 @@
+\documentclass[a4paper]{book}
+
+% Package for setting up A4 size and margins like Word's default
+\usepackage[a4paper, margin=2.54cm]{geometry}
+
+% Package for Chinese characters
+\usepackage{ctex}
+
+% Package for mathematical formulas
+\usepackage{amsmath}
+\usepackage{graphicx}
+% Package for code highlighting
+\usepackage{minted}
+
+\usepackage{silence}
+\WarningFilter{latex}{UTF8}
+
+\usepackage{xcolor}
+\usepackage{mdframed}
+
+\definecolor{green}{RGB}{230, 252, 238}
+\newmdenv[
+backgroundcolor=green,
+linecolor=green
+]{greenbox}
+
+\begin{document}
+
+\chapter{Memory Management}
+
+\section{Memory Allocation}
+
+\subsection{Virtual Memory}
+
+\begin{greenbox}
+The virtual address of a job is 24 bits. The upper 8 bits are the segment number, and the lower 16 bits are the relative address within the segment.
+Please give the calculation process in detail for the following 3 calculation questions:
+
+1. How many segments can a job have at most?
+
+2. What is the maximum length of each segment?
+
+3. The following table is a segment table used by a segment storage management
+
+\vspace{0.5cm}
+\begin{tabular}{|c|c|p{3cm}|p{3cm}|}
+    \hline
+    Segment number & segment length & main memory\newline start address & whether in\newline main memory \\ \hline
+    0   & 600   & 2100  & Yes \\ \hline
+    1   & 40    & 2800  & Yes \\ \hline
+	2   & 100   & N/A   & No  \\ \hline
+	3   & 80    & 4000  & Yes \\ \hline
+\end{tabular}
+\vspace{0.5cm}
+
+Please calculate the main memory addresses of [0, 430], [1, 50], [2, 30], [3, 70]. The first value in the square brackets is the segment number, and the second value is the address within the segment. When address conversion is not possible, please explain what kind of interrupt is generated.
+\end{greenbox}
+
+Let's go through the three questions step by step with detailed explanations.
+
+\textbf{How many segments can a job have at most?}
+
+The virtual address of the job is 24 bits. The upper 8 bits represent the \textbf{segment number}, and the lower 16 bits represent the \textbf{relative address within the segment}. This means:
+
+- The \textbf{segment number} is represented by 8 bits.
+
+- The \textbf{relative address} within the segment is represented by 16 bits.
+
+Now, the question asks how many segments a job can have at most. Since the \textbf{segment number} is represented by 8 bits, the number of distinct values the segment number can take is:
+
+\[
+2^8 = 256
+\]
+
+Thus, the job can have at most \textbf{256 segments}.
+
+\textbf{What is the maximum length of each segment?}
+
+The maximum length of a segment corresponds to the maximum value of the \textbf{relative address} within the segment, which is represented by the \textbf{lower 16 bits}. The maximum value that can be represented by 16 bits is:
+
+\[
+2^{16} - 1 = 65535
+\]
+
+So, the maximum length of each segment is \textbf{65535} units (e.g., bytes, words, etc.), which is the highest relative address that can be represented with 16 bits.
+
+\textbf{Memory address calculations from the segment table}
+
+Given the segment table:
+
+\vspace{0.5cm}
+\begin{tabular}{|c|c|p{3cm}|p{3cm}|}
+    \hline
+    Segment number & segment length & main memory start address & whether in main memory \\ \hline
+    0   & 600   & 2100 & Yes  \\  \hline
+    1   & 40    & 2800 & Yes  \\  \hline
+	2   & 100   & N/A  & No   \\  \hline
+	3   & 80    & 4000 & Yes  \\  \hline
+\end{tabular}
+
+We need to calculate the main memory address for each of the following cases:
+
+- \textbf{[0, 430]}: Segment 0, relative address 430
+
+- \textbf{[1, 50]}: Segment 1, relative address 50
+
+- \textbf{[2, 30]}: Segment 2, relative address 30
+
+- \textbf{[3, 70]}: Segment 3, relative address 70
+
+\textbf{Calculations:}
+
+\textit{\textbf{1. \textbf{[0, 430]}: Segment 0, relative address 430}}
+
+- Segment 0 starts at main memory address 2100 and has a length of 600.
+
+- The main memory address is calculated by adding the relative address (430) to the start address of the segment (2100):
+  
+\[
+\text{Main Memory Address} = 2100 + 430 = 2530
+\]
+
+So, the main memory address for \textbf{[0, 430]} is \textbf{2530}.
+
+\textit{\textbf{2. \textbf{[1, 50]}: Segment 1, relative address 50}}
+
+- Segment 1 starts at main memory address 2800 and has a length of 40.
+
+- The main memory address is calculated by adding the relative address (50) to the start address of the segment (2800):
+  
+\[
+\text{Main Memory Address} = 2800 + 50 = 2850
+\]
+
+However, the segment length of Segment 1 is only 40, so the relative address 50 exceeds the segment’s size. This will cause an \textbf{interrupt} due to a \textbf{segmentation fault}, as the address is outside the bounds of the segment.
+
+\textit{\textbf{3. \textbf{[2, 30]}: Segment 2, relative address 30}}
+
+- Segment 2 is \textbf{not in main memory} (its main memory start address is N/A), which means it is \textbf{not accessible} right now.
+
+- An \textbf{interrupt} will be generated for this address request because the segment is not in memory, likely triggering a \textbf{page fault} or a \textbf{segmentation fault}, depending on the system's memory management.
+
+\textit{\textbf{4. \textbf{[3, 70]}: Segment 3, relative address 70}}
+
+- Segment 3 starts at main memory address 4000 and has a length of 80.
+
+- The main memory address is calculated by adding the relative address (70) to the start address of the segment (4000):
+  
+\[
+\text{Main Memory Address} = 4000 + 70 = 4070
+\]
+
+So, the main memory address for \textbf{[3, 70]} is \textbf{4070}.
+
+\textbf{Summary of Results}
+
+\vspace{0.5cm}
+\begin{tabular}{|c|c|p{4cm}|c|}
+    \hline
+    Segment Number & Relative Address & Resulting\newline Main Memory Address & Explanation \\ \hline
+    0   & 430   & 2530  & Valid address \\ \hline
+    1   & 50    & Error\newline(segmentation fault)  & Address exceeds \\ \hline
+	2   & 30   & Error\newline(not in memory) & Segment not in memory  \\ \hline
+	3   & 70    & 4070  & Valid address \\ \hline
+\end{tabular}
+
+\textbf{Interrupts:}
+
+- For \textbf{[1, 50]}, a segmentation fault occurs because the relative address exceeds the segment's length.
+
+- For \textbf{[2, 30]}, an interrupt occurs because the segment is not in memory.
+
+\newpage
+
+\subsection{Allocation Algorithm}
+
+\begin{greenbox}
+There are three jobs, A (30K), B (70K) and C (50K), which request memory allocation in sequence. There are two non-contiguous free areas in the memory, F1 (100K) and F2 (50K). Please use the best fit algorithm and the worst fit algorithm to explain the memory allocation process.
+
+In memory management, \textbf{Best Fit} and \textbf{Worst Fit} are two allocation strategies used to assign free memory areas to processes. Let's walk through the allocation process for both algorithms based on the given scenario:
+\end{greenbox}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[height=5cm]{img/memory-virtual_memory.jpg}  % Adjust width as needed
+    \caption{Your Image Caption}
+    \label{fig:your_label}
+\end{figure}
+
+\textbf{Given:}
+
+- \textbf{Jobs}:
+
+  - A (30K)
+  
+  - B (70K)
+  
+  - C (50K)
+  
+- \textbf{Free Memory Areas}:
+
+  - F1 (100K)
+  
+  - F2 (50K)
+
+\subsubsection{Best Fit Algorithm}
+
+In the \textbf{Best Fit} algorithm, we allocate the memory from the smallest free block that is large enough to satisfy the request. The goal is to leave the smallest leftover space after allocation.
+
+\textit{\textbf{Steps:}}
+
+1. \textbf{Allocate Job A (30K)}:
+
+   - Available memory: F1 (100K), F2 (50K).
+   
+   - Best Fit chooses the smallest free area that can accommodate the job, which is \textbf{F2 (50K)}.
+   
+   - \textbf{F2} is reduced to 20K after allocating 30K for Job A.
+
+   New memory areas:
+   
+   - F1 (100K)
+   
+   - F2 (20K)
+
+2. \textbf{Allocate Job B (70K)}:
+
+   - Available memory: F1 (100K), F2 (20K).
+   
+   - Best Fit chooses \textbf{F1 (100K)}, because it is the smallest block that fits Job B.
+   
+   - \textbf{F1} is reduced to 30K after allocating 70K for Job B.
+
+   New memory areas:
+   
+   - F1 (30K)
+   
+   - F2 (20K)
+
+3. \textbf{Allocate Job C (50K)}:
+
+   - Available memory: F1 (30K), F2 (20K).
+   
+   - There is \textbf{no sufficient memory} left to allocate Job C because neither F1 nor F2 can fit 50K.
+   
+   - Allocation for Job C fails.
+
+   Final memory allocation:
+   
+   - Job A allocated to F2 (30K used).
+   
+   - Job B allocated to F1 (70K used).
+   
+   - Job C \textbf{cannot be allocated} due to insufficient space.
+
+\subsubsection{Worst Fit Algorithm}
+
+In the \textbf{Worst Fit} algorithm, we allocate the memory from the largest free block, hoping to leave the largest possible remaining space after allocation.
+
+\textit{\textbf{Steps:}}
+
+1. \textbf{Allocate Job A (30K)}:
+
+   - Available memory: F1 (100K), F2 (50K).
+   
+   - Worst Fit chooses \textbf{F1 (100K)}, because it is the largest free block.
+   
+   - \textbf{F1} is reduced to 70K after allocating 30K for Job A.
+
+   New memory areas:
+   
+   - F1 (70K)
+   
+   - F2 (50K)
+
+2. \textbf{Allocate Job B (70K)}:
+
+   - Available memory: F1 (70K), F2 (50K).
+   
+   - Worst Fit chooses \textbf{F1 (70K)}, because it is the largest free block.
+   
+   - \textbf{F1} is reduced to 0K after allocating 70K for Job B.
+
+   New memory areas:
+   
+   - F1 (0K)
+   
+   - F2 (50K)
+
+3. \textbf{Allocate Job C (50K)}:
+
+   - Available memory: F2 (50K).
+   
+   - Worst Fit chooses \textbf{F2 (50K)}, which exactly fits Job C.
+   
+   - \textbf{F2} is reduced to 0K after allocating 50K for Job C.
+
+   Final memory allocation:
+   
+   - Job A allocated to F1 (30K used).
+   
+   - Job B allocated to F1 (70K used).
+   
+   - Job C allocated to F2 (50K used).
+
+\subsubsection{Summary of Results}
+
+- \textbf{Best Fit}:
+
+  - Job A allocated to F2.
+  
+  - Job B allocated to F1.
+  
+  - Job C cannot be allocated.
+
+- \textbf{Worst Fit}:
+
+  - Job A allocated to F1.
+  
+  - Job B allocated to F1.
+  
+  - Job C allocated to F2.
+
+In this case, the \textbf{Worst Fit} algorithm results in better memory utilization because all jobs are allocated successfully, whereas \textbf{Best Fit} fails to allocate the third job (C).
+
+\chapter{I/O Management}
+
+\section{Disk}
+
+\subsection{Allocation Algorithm}
+
+\begin{greenbox}
+Assume that a hard disk has 200 tracks. The tracks are numbered 0-199. After the head has completed service on track 140, it is now performing read/write operations on track 143. There is the following request sequence in chronological order:
+88, 147, 91, 177, 94, 150, 102, 175, 130.
+
+Give the disk request service order, the number of tracks moved, and the average number of tracks moved when using SSTF and SCAN strategies.
+\end{greenbox}
+
+假设某硬盘共有200个磁道。磁道编号是0-199. 磁头在140道完成服务后，现在正在143道上进行读/写操作。有如下按时间先后顺序排列的请求序列：
+88, 147, 91, 177, 94, 150, 102, 175, 130.
+
+给出用SSTF和SCAN策略时的磁盘请求服务次序、移动磁道数以及平均移动磁道数。
+
+To solve this, we need to determine the order of service for the disk requests using both the SSTF (Shortest Seek Time First) and SCAN (elevator) disk scheduling algorithms, and calculate the total and average number of tracks moved.
+
+\subsubsection{1. \textbf{Shortest Seek Time First (SSTF)}}
+
+- \textbf{Initial position of the head}: Track 143
+
+- \textbf{Request queue}: 88, 147, 91, 177, 94, 150, 102, 175, 130
+
+
+\textbf{SSTF Strategy}:
+This strategy services the request that is closest to the current head position.
+
+\textbf{Execution}:
+
+1. Starting at track 143, the closest request is 147 (distance = 4).
+2. Next, from 147, the closest request is 150 (distance = 3).
+3. From 150, the closest request is 130 (distance = 20).
+4. From 130, the closest request is 102 (distance = 28).
+5. From 102, the closest request is 94 (distance = 8).
+6. From 94, the closest request is 91 (distance = 3).
+7. From 91, the closest request is 88 (distance = 3).
+8. From 88, the closest request is 175 (distance = 87).
+9. From 175, the closest request is 177 (distance = 2).
+
+\textbf{Service Order}: 143 → 147 → 150 → 130 → 102 → 94 → 91 → 88 → 175 → 177
+
+\textbf{Tracks moved}:
+
+- Total tracks moved: \(4 + 3 + 20 + 28 + 8 + 3 + 3 + 87 + 2 = 158\)
+
+- Average number of tracks moved: \(\frac{158}{9} \approx 17.56\)
+
+
+\subsubsection{2. \textbf{SCAN (Elevator)}}
+
+- \textbf{Initial position of the head}: Track 143
+
+- \textbf{Request queue}: 88, 147, 91, 177, 94, 150, 102, 175, 130
+
+- \textbf{Direction}: Assume the head moves in the increasing track direction first.
+
+
+\textbf{SCAN Strategy}:
+This strategy moves the head in one direction, servicing all requests until it reaches the end or the last request in that direction, then reverses and services requests in the opposite direction.
+
+\textbf{Execution}:
+
+1. From 143, the head moves right to 147.
+2. Then, it continues to 150.
+3. Next, it moves to 175 and then to 177 (the end of the right side).
+4. The head reverses direction and services requests in decreasing order: 130, 102, 94, 91, and finally 88.
+
+\textbf{Service Order}: 143 → 147 → 150 → 175 → 177 → 130 → 102 → 94 → 91 → 88
+
+\textbf{Tracks moved}:
+
+- Tracks moved in the increasing direction: \(4 + 3 + 25 + 2 = 34\)
+
+- Tracks moved in the decreasing direction: \(47 + 28 + 8 + 3 + 3 = 89\)
+
+- Total tracks moved: \(34 + 89 = 123\)
+
+- Average number of tracks moved: \(\frac{123}{9} \approx 13.67\)
+
+
+\subsubsection{\textbf{Summary}:}
+
+- \textbf{SSTF}:
+
+  
+  - \textbf{Order}: 143 → 147 → 150 → 130 → 102 → 94 → 91 → 88 → 175 → 177
+
+  - \textbf{Total tracks moved}: 158
+
+  - \textbf{Average}: ~17.56 tracks
+
+
+- \textbf{SCAN}:
+
+  
+  - \textbf{Order}: 143 → 147 → 150 → 175 → 177 → 130 → 102 → 94 → 91 → 88
+
+  - \textbf{Total tracks moved}: 123
+
+  - \textbf{Average}: ~13.67 tracks
+
+
+Certainly! Let's illustrate how the \textbf{FCFS (First-Come, First-Served)} and \textbf{CSCAN (Circular SCAN)} disk scheduling algorithms would process this example.
+
+\begin{greenbox}
+Furthermore, illustrating FCFS and CSCAN
+\end{greenbox}
+
+\subsubsection{Initial Data:}
+
+- \textbf{Initial position of the head}: Track 143
+
+- \textbf{Request sequence}: 88, 147, 91, 177, 94, 150, 102, 175, 130
+
+
+\subsubsection{1. \textbf{First-Come, First-Served (FCFS)}}
+
+\textbf{Strategy}:
+This algorithm services the requests in the exact order they arrive, without any reordering.
+
+\textbf{Execution}:
+
+- The service order will be: 143 → 88 → 147 → 91 → 177 → 94 → 150 → 102 → 175 → 130.
+
+
+\textbf{Tracks moved}:
+
+- Total tracks moved:
+
+  
+  - From 143 to 88: \(143 - 88 = 55\)
+
+  - From 88 to 147: \(147 - 88 = 59\)
+
+  - From 147 to 91: \(147 - 91 = 56\)
+
+  - From 91 to 177: \(177 - 91 = 86\)
+
+  - From 177 to 94: \(177 - 94 = 83\)
+
+  - From 94 to 150: \(150 - 94 = 56\)
+
+  - From 150 to 102: \(150 - 102 = 48\)
+
+  - From 102 to 175: \(175 - 102 = 73\)
+
+  - From 175 to 130: \(175 - 130 = 45\)
+
+
+- \textbf{Total tracks moved}: \(55 + 59 + 56 + 86 + 83 + 56 + 48 + 73 + 45 = 561\)
+
+
+- \textbf{Average number of tracks moved}: \(\frac{561}{9} \approx 62.33\)
+
+
+\subsubsection{2. \textbf{Circular SCAN (CSCAN)}}
+
+\textbf{Strategy}:
+CSCAN works like SCAN but, when the head reaches the end of the disk, it jumps directly to the other end and continues servicing requests in the same direction.
+
+\textbf{Assumption}:
+
+- The head moves in the increasing track direction first (rightwards).
+
+
+\textbf{Execution}:
+
+1. From track 143, the head moves right to service 147.
+2. Then it continues to 150, 175, and 177 (the end of the increasing side).
+3. After reaching the highest track (or the last request in that direction), it jumps to track 0 and continues servicing requests from there in the same direction.
+4. Services 88, 91, 94, 102, and 130 as it moves up.
+
+\textbf{Service Order}: 143 → 147 → 150 → 175 → 177 → (jump to 0) → 88 → 91 → 94 → 102 → 130
+
+\textbf{Tracks moved}:
+
+- Tracks moved in the increasing direction: \(4 + 3 + 25 + 2 = 34\)
+
+- Jump from 177 to 0: \(177\) (full disk jump)
+
+- Tracks moved from 0 to 88: \(88\)
+
+- Tracks moved to service 91, 94, 102, and 130 sequentially:
+
+  - \(91 - 88 = 3\)
+
+  - \(94 - 91 = 3\)
+
+  - \(102 - 94 = 8\)
+
+  - \(130 - 102 = 28\)
+
+
+\textbf{Total tracks moved}:
+
+- \(34 + 177 + 88 + 3 + 3 + 8 + 28 = 341\)
+
+
+\textbf{Average number of tracks moved}:
+
+- \(\frac{341}{9} \approx 37.89\)
+
+
+\subsubsection{\textbf{Summary}:}
+
+- \textbf{FCFS}:
+
+  
+  - \textbf{Order}: 143 → 88 → 147 → 91 → 177 → 94 → 150 → 102 → 175 → 130
+
+  - \textbf{Total tracks moved}: 561
+
+  - \textbf{Average}: ~62.33 tracks
+
+
+- \textbf{CSCAN}:
+
+  
+  - \textbf{Order}: 143 → 147 → 150 → 175 → 177 → (jump to 0) → 88 → 91 → 94 → 102 → 130
+
+  - \textbf{Total tracks moved}: 341
+
+  - \textbf{Average}: ~37.89 tracks
+
+
+These results illustrate how FCFS tends to result in larger overall movement, while CSCAN, with its uniform sweeping motion and jump, offers more consistent service with fewer tracks moved on average.
+
+
+\end{document}

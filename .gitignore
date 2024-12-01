@@ -1,0 +1,29 @@
+# LaTeX project files
+*.aux
+*.bbl
+*.blg
+*.lof
+*.log
+*.lot
+*.out
+*.synctex.gz
+
+# Specific LaTeX tools
+*.dvi
+*.ps
+*.pdf
+*.gz
+*.zip
+*.7z
+*.rar
+*.tar.gz
+
+# Temporary files
+*.bak
+*.tmp
+*.swp
+
+# minted, for showing code block
+_minted/
+
+*.pdf
