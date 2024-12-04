@@ -10,7 +10,9 @@
 \usepackage{amsmath}
 \usepackage{graphicx}
 
-\setcounter{secnumdepth}{1}
+\usepackage{listings}
+
+\setcounter{secnumdepth}{3}
 
 % Package for code highlighting
 % pip install Pygments
@@ -29,6 +31,8 @@ backgroundcolor=green,
 linecolor=green
 ]{greenbox}
 
+\newcommand{\sfbf}[1]{{\normalsize\textsf{\textbf{§ #1}}}}
+% \newcommand{\sfbf}[1]{{\large\textsf{#1}}}
 \begin{document}
 
 \chapter{Process Management}
@@ -43,309 +47,667 @@ The reason why the operating system introduces the concept of process is to enab
 
 操作系统之所以要引入进程的概念，是为了使程序在多道程序环境下能并发执行，并对并发执行的程序加以控制和描述。请举例具体说明。 
 
-\subsubsection{Explanation of Processes in Operating Systems}
+\sfbf{Explanation of Processes in Operating Systems}
 
 The concept of a \textbf{process} is introduced to allow programs to run concurrently in a multi-programming environment. A \textbf{process} is essentially a program in execution, which includes not just the program code but also the program's state, data, and resources. The operating system uses processes to manage and control the execution of multiple programs while ensuring resource sharing and isolation.
 
-\rule{0.75\textwidth}{0.5pt}
+\hrulefill
 
-\subsubsection{Examples of Processes and Their Role in Concurrent Execution}
+\sfbf{1. Web Server Handling Multiple Client Requests}
 
-\textbf{1. Web Server Handling Multiple Client Requests}
+\begin{itemize}
+\item 
+\textbf{Scenario}: A web server, like Apache or Nginx, handles multiple client requests simultaneously.
 
-   - \textbf{Scenario}: A web server, like Apache or Nginx, handles multiple client requests simultaneously.
-   
-   - \textbf{How Processes Help}:
-     
-     - Each client request is handled as a separate process or thread. 
-     
-     - The operating system schedules these processes to run concurrently on available CPU cores, allowing the server to handle many clients simultaneously.
-   
-   - \textbf{Advantages}:
-     
-     - Resource sharing: Multiple processes can access shared resources like memory or files.
-     
-     - Isolation: If one client process crashes, it does not affect others.
+\item 
+\textbf{How Processes Help}:
+\begin{itemize}
+\item 
+Each client request is handled as a separate process or thread.
 
-\rule{0.75\textwidth}{0.5pt}
+\item 
+The operating system schedules these processes to run concurrently on available CPU cores, allowing the server to handle many clients simultaneously.
 
-\textbf{2. Text Editor and Music Player Running Together}
+\end{itemize}
 
-   - \textbf{Scenario}: A user is writing a document in a text editor while listening to music using a media player.
-  
-   - \textbf{How Processes Help}:
+\item 
+\textbf{Advantages}:
+\begin{itemize}
+\item 
+Resource sharing: Multiple processes can access shared resources like memory or files.
 
-     - The text editor and the music player are separate processes.
+\item 
+Isolation: If one client process crashes, it does not affect others.
 
-     - The operating system ensures that both processes get CPU time, switching between them rapidly (time-sharing).
+\end{itemize}
 
-   - \textbf{Advantages}:
+\end{itemize}
 
-     - The user perceives that both tasks are happening simultaneously.
+\hrulefill
 
-     - Processes are independent: The music continues even if the text editor crashes.
+\sfbf{2. Background File Download While Browsing the Internet}
 
-\rule{0.75\textwidth}{0.5pt}
+\begin{itemize}
+\item 
+\textbf{Scenario}: A browser downloads a file in the background while the user continues to browse.
 
-\textbf{3. Background File Download While Browsing the Internet}
+\item 
+\textbf{How Processes Help}:
+\begin{itemize}
+\item 
+The browser spawns a separate process for the file download.
 
-   - \textbf{Scenario}: A browser downloads a file in the background while the user continues to browse.
-   
-   - \textbf{How Processes Help}:
-     
-     - The browser spawns a separate process for the file download.
-     
-     - This allows the main browser process to remain responsive for user interactions while the download process handles network operations.
-   
-   - \textbf{Advantages}:
-     
-     - Improved user experience: The browser remains responsive.
-     
-     - Modularity: The download process can be paused, resumed, or even terminated without affecting the main browser.
+\item 
+This allows the main browser process to remain responsive for user interactions while the download process handles network operations.
 
-\rule{0.75\textwidth}{0.5pt}
+\end{itemize}
 
-\textbf{4. Compilation of Source Code}
+\item 
+\textbf{Advantages}:
+\begin{itemize}
+\item 
+Improved user experience: The browser remains responsive.
 
-   - \textbf{Scenario}: A developer is compiling a large program using `gcc` while editing another program.
-   
-   - \textbf{How Processes Help}:
-     
-     - The compilation process runs independently of the text editor.
-     
-     - The operating system schedules the compilation and the text editing processes to share CPU and memory.
-   
-   - \textbf{Advantages}:
-     
-     - Concurrency: Both tasks can progress simultaneously, improving productivity.
-     
-     - Isolation: Errors in the compilation process (e.g., syntax errors) do not affect the text editor.
+\item 
+Modularity: The download process can be paused, resumed, or even terminated without affecting the main browser.
 
-\rule{0.75\textwidth}{0.5pt}
+\end{itemize}
 
-\textbf{5. Print Queue Management}
+\end{itemize}
+\hrulefill
 
-   - \textbf{Scenario}: Multiple users send documents to a shared printer in a networked office.
-   
-   - \textbf{How Processes Help}:
-     
-     - Each print job is treated as a separate process managed by the print spooler.
-     
-     - The operating system queues the print jobs and schedules them one by one, ensuring fair access.
-   
-   - \textbf{Advantages}:
-     
-     - Resource sharing: The printer is shared efficiently among all users.
-     
-     - Control: Users can pause or cancel their print jobs without interfering with others.
+\sfbf{3. Compilation of Source Code}
 
-\rule{0.75\textwidth}{0.5pt}
+\begin{itemize}
+\item 
+\textbf{Scenario}: A developer is compiling a large program using \verb|gcc| while editing another program.
 
-\textbf{Key Features Enabled by Processes}
+\item 
+\textbf{How Processes Help}:
+\begin{itemize}
+\item 
+The compilation process runs independently of the text editor.
 
+\item 
+The operating system schedules the compilation and the text editing processes to share CPU and memory.
 
-1. \textbf{Concurrency}: Processes allow multiple tasks to be executed seemingly at the same time.
+\end{itemize}
 
-2. \textbf{Resource Sharing}: Processes enable efficient sharing of system resources like CPU, memory, and I/O devices.
+\item 
+\textbf{Advantages}:
+\begin{itemize}
+\item 
+Concurrency: Both tasks can progress simultaneously, improving productivity.
 
-3. \textbf{Isolation}: Each process runs in its own address space, ensuring that errors or crashes in one process do not affect others.
+\item 
+Isolation: Errors in the compilation process (e.g., syntax errors) do not affect the text editor.
 
-4. \textbf{Synchronization and Communication}: The operating system provides mechanisms (e.g., semaphores, message passing) for processes to coordinate and share data when needed.
+\end{itemize}
 
----
+\end{itemize}
+\hrulefill
 
-\textbf{Summary}
+\sfbf{4. Print Queue Management}
+
+\begin{itemize}
+\item 
+\textbf{Scenario}: Multiple users send documents to a shared printer in a networked office.
+
+\item 
+\textbf{How Processes Help}:
+\begin{itemize}
+\item 
+Each print job is treated as a separate process managed by the print spooler.
+
+\item 
+The operating system queues the print jobs and schedules them one by one, ensuring fair access.
+
+\end{itemize}
+
+\item 
+\textbf{Advantages}:
+\begin{itemize}
+\item 
+Resource sharing: The printer is shared efficiently among all users.
+
+\item 
+Control: Users can pause or cancel their print jobs without interfering with others.
+
+\end{itemize}
+
+\end{itemize}
+
+\hrulefill
+
+\sfbf{Key Features Enabled by Processes}
+\begin{enumerate}
+\item 
+\textbf{Concurrency}: Processes allow multiple tasks to be executed seemingly at the same time.
+
+\item 
+\textbf{Resource Sharing}: Processes enable efficient sharing of system resources like CPU, memory, and I/O devices.
+
+\item 
+\textbf{Isolation}: Each process runs in its own address space, ensuring that errors or crashes in one process do not affect others.
+
+\item 
+\textbf{Synchronization and Communication}: The operating system provides mechanisms (e.g., semaphores, message passing) for processes to coordinate and share data when needed.
+
+\end{enumerate}
+\hrulefill
+
+\sfbf{Summary}
 
 The introduction of processes allows operating systems to manage the complexities of concurrent execution. By using processes, the system can balance resource utilization, isolate tasks for stability, and enable efficient and responsive multi-tasking. Examples like web servers, text editors, media players, and print queues illustrate how processes are central to modern computing environments.
 
-\subsubsection{Why Describing?}
+\subsection{Process Isolation}
+
+\begin{greenbox}
+For what development reasons does the operating system need process isolation? What are the benefits of process isolation? What consequences will occur if the operating system does not have process isolation?
+\end{greenbox}
+
+\sfbf{Reasons for Process Isolation in Operating System Development}
+
+\begin{enumerate}
+\item 
+\textbf{Protection of Resources}:
+\begin{itemize}
+\item 
+To prevent one process from interfering with another’s memory, files, or resources, either accidentally or maliciously.
+
+\item 
+Ensures that bugs or crashes in one process do not corrupt or compromise other processes or the operating system.
+
+\end{itemize}
+
+\item 
+\textbf{Security}:
+\begin{itemize}
+\item 
+To safeguard sensitive data and operations from unauthorized access by other processes.
+
+\item 
+Prevents malicious programs from reading or modifying another process’s private data.
+
+\end{itemize}
+
+\item 
+\textbf{Stability and Reliability}:
+\begin{itemize}
+\item 
+Isolation ensures that system crashes or bugs in one process do not affect the execution of others.
+
+\item 
+Prevents cascading failures, where one faulty process brings down the entire system.
+
+\end{itemize}
+
+\item 
+\textbf{Concurrent Execution}:
+\begin{itemize}
+\item 
+By isolating processes, the OS can manage concurrent execution effectively, allocating resources and scheduling processes independently without conflict.
+
+\end{itemize}
+
+\item 
+\textbf{Multi-User Environment}:
+\begin{itemize}
+\item 
+In systems that support multiple users, process isolation ensures that one user's processes cannot interfere with or access another user's processes or data.
+
+\end{itemize}
+
+\end{enumerate}
+\hrulefill
+
+\sfbf{Benefits of Process Isolation}
+
+\begin{enumerate}
+\item 
+\textbf{Enhanced Security}:
+\begin{itemize}
+\item 
+Prevents unauthorized access or tampering with private data.
+
+\item 
+Reduces the risk of attacks, such as buffer overflows or code injection, affecting other processes.
+
+\end{itemize}
+
+\item 
+\textbf{Fault Tolerance}:
+\begin{itemize}
+\item 
+A process crash does not affect the rest of the system or other running processes.
+
+\item 
+Ensures that critical system components remain operational.
+
+\end{itemize}
+
+\item 
+\textbf{Resource Containment}:
+\begin{itemize}
+\item 
+Processes are limited to their allocated resources, preventing one from monopolizing CPU, memory, or I/O.
+
+\item 
+Ensures fair resource sharing among processes.
+
+\end{itemize}
+
+\item 
+\textbf{Improved Debugging}:
+\begin{itemize}
+\item 
+By isolating processes, developers can debug individual processes without interference from others.
+
+\item 
+Easier to identify and fix errors.
+
+\end{itemize}
+
+\item 
+\textbf{Support for Virtualization and Sandboxing}:
+\begin{itemize}
+\item 
+Enables virtualization technologies and sandboxed environments (e.g., containers, virtual machines), where processes run in isolated spaces.
+
+\end{itemize}
+
+\end{enumerate}
+\hrulefill
+
+\sfbf{Consequences of No Process Isolation}
+
+\begin{enumerate}
+\item 
+\textbf{Security Risks}:
+\begin{itemize}
+\item 
+One process could read, modify, or delete another process's data, leading to breaches of sensitive information.
+
+\item 
+Malicious processes could exploit vulnerabilities in other processes to gain control of the system.
+
+\end{itemize}
+
+\item 
+\textbf{System Instability}:
+\begin{itemize}
+\item 
+A bug or crash in one process could corrupt the memory or data of other processes, causing widespread failures.
+
+\item 
+Unpredictable behavior and potential system crashes.
+
+\end{itemize}
+
+\item 
+\textbf{Resource Contention}:
+\begin{itemize}
+\item 
+Processes could interfere with each other’s resource usage, causing performance degradation or starvation for certain processes.
+
+\end{itemize}
+
+\item 
+\textbf{Difficulty in Multi-User Environments}:
+\begin{itemize}
+\item 
+Without isolation, processes from different users could interfere with or spy on each other, breaking the principle of user independence.
+
+\end{itemize}
+
+\item 
+\textbf{Debugging Challenges}:
+\begin{itemize}
+\item 
+Errors in one process could propagate to others, making it hard to identify the root cause.
+
+\item 
+Debugging becomes nearly impossible in the absence of clear boundaries.
+
+\end{itemize}
+
+\item 
+\textbf{Infeasibility of Virtualization}:
+\begin{itemize}
+\item 
+Without isolation, running multiple virtual machines, containers, or sandboxed applications would be impractical, as their resources and data would intermingle.
+
+\end{itemize}
+
+\end{enumerate}
+\hrulefill
+
+\sfbf{Summary}
+
+\textbf{Development Reasons for Process Isolation}:
+
+\begin{itemize}
+\item 
+To ensure security, stability, and effective resource management.
+
+\item 
+To support multi-user systems and virtualization.
+
+\end{itemize}
+
+\textbf{Benefits}:
+\begin{itemize}
+\item 
+Security, fault tolerance, fairness in resource usage, and support for advanced technologies like containers.
+
+\end{itemize}
+
+\textbf{Consequences Without Isolation}:
+\begin{itemize}
+\item 
+Increased risk of security breaches, instability, resource contention, and debugging difficulties.
+
+\end{itemize}
+
+Process isolation is fundamental to modern operating systems, enabling them to provide a secure, stable, and efficient environment for running multiple applications concurrently.
+
+\subsection{Describing Concurrent Programs}
 
 \begin{greenbox}
 What is the purpose of OS describing concurrent programs?
 \end{greenbox}
 
+操作系统描述并发程序的目的是什么？
+
 The purpose of the operating system (OS) describing concurrent programs lies in its role as a \textbf{manager and mediator} for programs running simultaneously. Describing concurrent programs means that the OS needs to maintain and provide a \textbf{structured representation} of each program and its state. This is critical for ensuring proper execution, coordination, and resource management in a multi-programming environment. Below are the key purposes of this descriptive functionality:
+\hrulefill
 
-\rule{0.75\textwidth}{0.5pt}
+\sfbf{1. Tracking the State of Each Program}
 
-\textbf{1. Tracking the State of Each Program}
+\begin{itemize}
+\item 
+\textbf{Purpose}: The OS needs to know what each program is doing at any given time (e.g., running, waiting, or terminated).
 
-   - \textbf{Purpose}: The OS needs to know what each program is doing at any given time (e.g., running, waiting, or terminated).
-   
-   - \textbf{How It Works}:
-   
-     - The OS maintains a \textbf{process control block (PCB)} for each process, which describes its:
-       
-       - Unique identifier (PID)
-       
-       - State (e.g., running, ready, waiting)
-       
-       - Resource usage (e.g., memory allocated, open files)
-       
-       - CPU registers and program counter (to resume execution later)
-   
-   - \textbf{Why It's Important}:
-     
-     - Ensures that processes are resumed from the \textbf{correct point} after being paused or interrupted.
-     
-     In real-life operating systems, the \textbf{"correct point"} refers to the exact state of a process at the moment it is interrupted or paused. This includes:
+\item 
+\textbf{How It Works}:
+\begin{itemize}
+\item 
+The OS maintains a \textbf{process control block (PCB)} for each process, which describes its:
+\begin{itemize}
+\item 
+Unique identifier (PID)
 
-1. \textbf{Program Counter (PC)}: The memory address of the next instruction to be executed.
+\item 
+State (e.g., running, ready, waiting)
 
-2. \textbf{CPU Registers}: Values stored in the processor's registers at the time of interruption.
+\item 
+Resource usage (e.g., memory allocated, open files)
 
-3. \textbf{Memory State}: The current data in the process's allocated memory.
+\item 
+CPU registers and program counter (to resume execution later)
 
-4. \textbf{I/O State}: The status of any ongoing input/output operations.
+\end{itemize}
 
-When the OS resumes the process, it restores these states so that the process continues execution as if it had never been paused. This ensures continuity and correctness.
+\end{itemize}
 
-     - Allows the OS to manage transitions between states efficiently.
+\item 
+\textbf{Why It's Important}:
+\begin{itemize}
+\item 
+Ensures that processes are resumed from the correct point after being paused or interrupted.
 
-\textbf{1. Tracking the State of Each Program}
+\item 
+Allows the OS to manage transitions between states efficiently.
 
-\textbf{2. Ensuring Fair Resource Allocation}
+\end{itemize}
 
-   - \textbf{Purpose}: Concurrent programs compete for resources like CPU, memory, and I/O devices. The OS must describe resource usage to allocate fairly and avoid conflicts.
-   
-   - \textbf{How It Works}:
-     
-     - The OS keeps tables describing:
-       
-       - Memory allocation for each process.
-       
-       - Open files and devices being used.
-       
-       - CPU scheduling priorities and timeslices.
-   
-   - \textbf{Why It's Important}:
-     
-     - Prevents resource starvation or deadlock.
-     
-     - Optimizes resource utilization across all running programs.
+\end{itemize}
+\hrulefill
 
-\rule{0.75\textwidth}{0.5pt}
+\sfbf{2. Ensuring Fair Resource Allocation}
 
-\textbf{3. Facilitating Inter-Process Communication (IPC)}
+\begin{itemize}
+\item 
+\textbf{Purpose}: Concurrent programs compete for resources like CPU, memory, and I/O devices. The OS must describe resource usage to allocate fairly and avoid conflicts.
 
-   - \textbf{Purpose}: Many concurrent programs need to communicate or share data (e.g., a web browser process communicating with a file download process).
-   
-   - \textbf{How It Works}:
-     
-     - The OS provides descriptions of processes and their shared resources to facilitate:
-       
-       - Message passing
-       
-       - Shared memory regions
-       
-       - Synchronization primitives (e.g., semaphores, mutexes)
-   
-   - \textbf{Why It's Important}:
-     
-     - Enables cooperation and coordination among processes.
-     
-     - Prevents conflicts or inconsistencies when accessing shared data.
-     
-\rule{0.75\textwidth}{0.5pt}
+\item 
+\textbf{How It Works}:
+\begin{itemize}
+\item 
+The OS keeps tables describing:
+\begin{itemize}
+\item 
+Memory allocation for each process.
 
-\textbf{4. Supporting Debugging and Monitoring}
+\item 
+Open files and devices being used.
 
-   - \textbf{Purpose}: Describing concurrent programs allows developers and administrators to debug and monitor their behavior.
-   
-   - \textbf{How It Works}:
-     
-     - The OS provides tools and data, such as:
-       
-       - Logs of process activity.
-       
-       - Resource usage statistics (e.g., CPU, memory, I/O).
-       
-       - Event tracing for identifying bottlenecks or errors.
-   
-   - \textbf{Why It's Important}:
-     
-     - Helps identify and resolve issues in concurrent systems.
-     
-     - Provides insights into system performance and optimization opportunities.
+\item 
+CPU scheduling priorities and timeslices.
 
-\rule{0.75\textwidth}{0.5pt}
+\end{itemize}
 
-\textbf{5. Handling Synchronization and Coordination}
+\end{itemize}
 
-   - \textbf{Purpose}: The OS uses descriptions to manage dependencies and coordination between concurrent programs.
-   
-   - \textbf{How It Works}:
-     
-     - The OS describes:
-       
-       - Process dependencies (e.g., one process waiting for another).
-       
-       - Conditions for transitions (e.g., process A starts only after process B completes).
-  
-   - \textbf{Why It's Important}:
-     
-     - Avoids deadlocks and race conditions.
-     
-     - Ensures that interdependent programs operate in a consistent and predictable manner.
+\item 
+\textbf{Why It's Important}:
+\begin{itemize}
+\item 
+Prevents resource starvation or deadlock.
 
-\rule{0.75\textwidth}{0.5pt}
+\item 
+Optimizes resource utilization across all running programs.
 
-\textbf{6. Implementing Security and Isolation}
+\end{itemize}
 
-   - \textbf{Purpose}: The OS uses descriptions to enforce security and prevent one program from interfering with another.
-   
-   - \textbf{How It Works}:
-   
-     - The OS maintains descriptions of:
-       
-       - Each process's permissions (e.g., access to files or devices).
-       
-       - Memory regions allocated to each process.
-   
-   - \textbf{Why It's Important}:
-     
-     - Protects processes from unauthorized access or modification.
-     
-     - Prevents security vulnerabilities arising from concurrent execution.
-     
-\rule{0.75\textwidth}{0.5pt}
+\end{itemize}
+\hrulefill
 
-\textbf{Example: Describing Processes in a Multi-Program Environment}
+\sfbf{3. Facilitating Inter-Process Communication (IPC)}
+
+\begin{itemize}
+\item 
+\textbf{Purpose}: Many concurrent programs need to communicate or share data (e.g., a web browser process communicating with a file download process).
+
+\item 
+\textbf{How It Works}:
+\begin{itemize}
+\item 
+The OS provides descriptions of processes and their shared resources to facilitate:
+\begin{itemize}
+\item 
+Message passing
+
+\item 
+Shared memory regions
+
+\item 
+Synchronization primitives (e.g., semaphores, mutexes)
+
+\end{itemize}
+
+\end{itemize}
+
+\item 
+\textbf{Why It's Important}:
+\begin{itemize}
+\item 
+Enables cooperation and coordination among processes.
+
+\item 
+Prevents conflicts or inconsistencies when accessing shared data.
+
+\end{itemize}
+
+\end{itemize}
+\hrulefill
+
+\sfbf{4. Supporting Debugging and Monitoring}
+
+\begin{itemize}
+\item 
+\textbf{Purpose}: Describing concurrent programs allows developers and administrators to debug and monitor their behavior.
+
+\item 
+\textbf{How It Works}:
+\begin{itemize}
+\item 
+The OS provides tools and data, such as:
+\begin{itemize}
+\item 
+Logs of process activity.
+
+\item 
+Resource usage statistics (e.g., CPU, memory, I/O).
+
+\item 
+Event tracing for identifying bottlenecks or errors.
+
+\end{itemize}
+
+\end{itemize}
+
+\item 
+\textbf{Why It's Important}:
+\begin{itemize}
+\item 
+Helps identify and resolve issues in concurrent systems.
+
+\item 
+Provides insights into system performance and optimization opportunities.
+
+\end{itemize}
+
+\end{itemize}
+\hrulefill
+
+\sfbf{5. Handling Synchronization and Coordination}
+
+\begin{itemize}
+\item 
+\textbf{Purpose}: The OS uses descriptions to manage dependencies and coordination between concurrent programs.
+
+\item 
+\textbf{How It Works}:
+\begin{itemize}
+\item 
+The OS describes:
+\begin{itemize}
+\item 
+Process dependencies (e.g., one process waiting for another).
+
+\item 
+Conditions for transitions (e.g., process A starts only after process B completes).
+
+\end{itemize}
+
+\end{itemize}
+
+\item 
+\textbf{Why It's Important}:
+\begin{itemize}
+\item 
+Avoids deadlocks and race conditions.
+
+\item 
+Ensures that interdependent programs operate in a consistent and predictable manner.
+
+\end{itemize}
+
+\end{itemize}
+\hrulefill
+
+\sfbf{6. Implementing Security and Isolation}
+
+\begin{itemize}
+\item 
+\textbf{Purpose}: The OS uses descriptions to enforce security and prevent one program from interfering with another.
+
+\item 
+\textbf{How It Works}:
+\begin{itemize}
+\item 
+The OS maintains descriptions of:
+\begin{itemize}
+\item 
+Each process's permissions (e.g., access to files or devices).
+
+\item 
+Memory regions allocated to each process.
+
+\end{itemize}
+
+\end{itemize}
+
+\item 
+\textbf{Why It's Important}:
+\begin{itemize}
+\item 
+Protects processes from unauthorized access or modification.
+
+\item 
+Prevents security vulnerabilities arising from concurrent execution.
+
+\end{itemize}
+
+\end{itemize}
+\hrulefill
+
+\sfbf{Example: Describing Processes in a Multi-Program Environment}
 
 Imagine a system where a user is running:
+\begin{enumerate}
+\item 
+A text editor.
 
-1. A text editor.
+\item 
+A music player.
 
-2. A music player.
+\item 
+A background file download.
 
-3. A background file download.
+\end{enumerate}
 
 The OS describes each program as follows:
+\begin{itemize}
+\item 
+\textbf{Process Control Block (PCB)}: Tracks their state (e.g., text editor is running, music player is ready, file download is waiting for I/O).
 
-- \textbf{Process Control Block (PCB)}: Tracks their state (e.g., text editor is running, music player is ready, file download is waiting for I/O).
+\item 
+\textbf{Resource Allocation}: Describes CPU time, memory, and I/O devices allocated to each program.
 
-- \textbf{Resource Allocation}: Describes CPU time, memory, and I/O devices allocated to each program.
+\item 
+\textbf{Dependencies and Communication}: Tracks whether the file download depends on network availability or if the text editor opens a file that another program is writing to.
 
-- \textbf{Dependencies and Communication}: Tracks whether the file download depends on network availability or if the text editor opens a file that another program is writing to.
+\end{itemize}
+
 By maintaining and using these descriptions, the OS ensures smooth execution, resource sharing, and responsiveness.
 
-\rule{0.75\textwidth}{0.5pt}
+\hrulefill
 
-\textbf{Summary}
+\sfbf{Summary}
 
 The purpose of the OS describing concurrent programs is to:
+\begin{itemize}
+\item 
+Track their state and behavior.
 
-- Track their state and behavior.
+\item 
+Allocate resources efficiently.
 
-- Allocate resources efficiently.
+\item 
+Facilitate inter-process communication.
 
-- Facilitate inter-process communication.
+\item 
+Support debugging and monitoring.
 
-- Support debugging and monitoring.
+\item 
+Coordinate dependencies and synchronization.
 
-- Coordinate dependencies and synchronization.
+\item 
+Enforce security and isolation.
 
-- Enforce security and isolation.
+\end{itemize}
 
 These descriptions enable the OS to manage complex interactions and ensure that the system remains stable, efficient, and user-friendly, even when multiple programs execute concurrently.
 
@@ -358,32 +720,51 @@ Concurrent execution of programs will produce discontinuity characteristics. Whe
 
 程序并发执行会产生间断性特征。程序在并发执行时，由于他们共享系统资源，因此为完成同一任务需要相互合作。这使得这些并发执行的进程之间形成了相互制约关系，从而使得进程在执行期间出新出现间断性。请举例具体说明。 
 
-\subsubsection{Producer-Consumer Problem with a Shared Buffer}
+\sfbf{Example: Producer-Consumer Problem with a Shared Buffer}
 
 \textbf{Scenario}
 
-In the \textbf{Producer-Consumer Problem}, a producer generates data items and places them in a shared buffer, while a consumer retrieves and processes those items. They operate concurrently and share system resources such as memory (the buffer). 
+In the \textbf{Producer-Consumer Problem}, a producer generates data items and places them in a shared buffer, while a consumer retrieves and processes those items. They operate concurrently and share system resources such as memory (the buffer).
 
 \textbf{Shared Resources}
 
-- A \textbf{buffer} with a fixed size \( N \), which can hold up to \( N \) data items.
+\begin{itemize}
+\item 
+A \textbf{buffer} with a fixed size ( N ), which can hold up to ( N ) data items.
 
-- Synchronization primitives (e.g., semaphores, mutexes) to avoid conflicts.
+\item 
+Synchronization primitives (e.g., semaphores, mutexes) to avoid conflicts.
+
+\end{itemize}
 
 \textbf{Discontinuity Characteristics}
+
 The producer and consumer do not execute continuously because they are mutually constrained by the state of the shared buffer:
+\begin{enumerate}
+\item 
+\textbf{Producer Constraints (Buffer Full):}
+\begin{itemize}
+\item 
+If the buffer is full, the producer must wait before adding more data. This introduces a discontinuity in the producer's execution because it cannot proceed until space is available in the buffer.
 
-1. \textbf{Producer Constraints (Buffer Full):}
+\end{itemize}
 
-   - If the buffer is full, the producer must wait before adding more data. This introduces a discontinuity in the producer's execution because it cannot proceed until space is available in the buffer.
+\item 
 
-2. \textbf{Consumer Constraints (Buffer Empty):}
+\textbf{Consumer Constraints (Buffer Empty):}
 
-   - If the buffer is empty, the consumer must wait for the producer to add data. This introduces a discontinuity in the consumer's execution because it cannot proceed without new data.
+\begin{itemize}
+\item 
+If the buffer is empty, the consumer must wait for the producer to add data. This introduces a discontinuity in the consumer's execution because it cannot proceed without new data.
+
+\end{itemize}
+
+\end{enumerate}
 
 \textbf{Code Illustration (Simplified Pseudocode)}
 
 \begin{minted}[frame=lines, fontsize=\normalsize]{c}
+
 #include <pthread.h>
 #include <semaphore.h>
 #include <stdio.h>
@@ -451,87 +832,156 @@ int main() {
 
 \textbf{Explanation of Discontinuity}
 
-1. \textbf{Buffer Full:}
+\begin{enumerate}
+\item 
+\textbf{Buffer Full:}
+\begin{itemize}
+\item 
+If the producer produces items faster than the consumer can consume them, the buffer will fill up.
 
-   - If the producer produces items faster than the consumer can consume them, the buffer will fill up.
-   
-   - The producer will enter a waiting state ($\mathrm{sem\_wait}(\&empty)$), causing a discontinuity in its execution.
+\item 
+The producer will enter a waiting state (\verb|sem_wait(&empty)|), causing a discontinuity in its execution.
 
-2. \textbf{Buffer Empty:}
+\end{itemize}
 
-   - If the consumer consumes items faster than the producer can produce them, the buffer will empty.
-   
-   - The consumer will enter a waiting state ($\mathrm{sem\_wait}(\&full)$), causing a discontinuity in its execution.
+\item 
+\textbf{Buffer Empty:}
+\begin{itemize}
+\item 
+If the consumer consumes items faster than the producer can produce them, the buffer will empty.
 
-3. \textbf{Mutual Constraint Relationship:}
+\item 
+The consumer will enter a waiting state (\verb|sem_wait(&full)|), causing a discontinuity in its execution.
 
-   - Both processes are constrained by the buffer’s state and must cooperate to achieve progress. This interdependency creates discontinuous execution as each process alternates between active and waiting states.
+\end{itemize}
+
+\item 
+\textbf{Mutual Constraint Relationship:}
+\begin{itemize}
+\item 
+Both processes are constrained by the buffer’s state and must cooperate to achieve progress. This interdependency creates discontinuous execution as each process alternates between active and waiting states.
+
+\end{itemize}
+
+\end{enumerate}
 
 This example highlights the need for synchronization and how mutual constraints between concurrently executing programs lead to discontinuity in their execution.
 
-\subsubsection{Bank Account Transactions with Concurrent Access}
+\sfbf{Example: Bank Account Transactions with Concurrent Access}
 
 \textbf{Scenario}
 
 Consider a shared bank account with a balance that is accessed by two concurrent processes:
+\begin{enumerate}
+\item 
+\textbf{Deposit Process}: Adds money to the account.
 
-1. \textbf{Deposit Process}: Adds money to the account.
+\item 
+\textbf{Withdraw Process}: Deducts money from the account.
 
-2. \textbf{Withdraw Process}: Deducts money from the account.
+\end{enumerate}
 
 \textbf{Shared Resource}
 
-- The \textbf{account balance} is a shared variable accessed by both processes.
+\begin{itemize}
+\item 
+The \textbf{account balance} is a shared variable accessed by both processes.
 
-\textbf{Discontinuity Characteristics}
+\end{itemize}
 
-1. \textbf{Insufficient Balance (Withdrawal Constraint):}
+\sfbf{Discontinuity Characteristics}
 
-   - If the account balance is less than the withdrawal amount, the withdraw process cannot proceed. It must wait until the deposit process adds sufficient funds. This creates a discontinuity in the execution of the withdraw process.
+\begin{enumerate}
+\item 
+\textbf{Insufficient Balance (Withdrawal Constraint):}
+\begin{itemize}
+\item 
+If the account balance is less than the withdrawal amount, the withdraw process cannot proceed. It must wait until the deposit process adds sufficient funds. This creates a discontinuity in the execution of the withdraw process.
 
-2. \textbf{Concurrent Access (Race Condition):}
+\end{itemize}
 
-   - Without proper synchronization, both processes might try to read or modify the balance simultaneously. This can cause incorrect results (e.g., overdrawing the account). To prevent this, one process must wait while the other accesses the shared balance, introducing discontinuity in the waiting process.
+\item 
+\textbf{Concurrent Access (Race Condition):}
+\begin{itemize}
+\item 
+Without proper synchronization, both processes might try to read or modify the balance simultaneously. This can cause incorrect results (e.g., overdrawing the account). To prevent this, one process must wait while the other accesses the shared balance, introducing discontinuity in the waiting process.
 
-\textbf{Detailed Example}
+\end{itemize}
 
-- Initial Balance: \$100
+\end{enumerate}
 
-- Transactions:  
+\sfbf{Detailed Example}
 
-	- \textbf{Deposit Process} tries to deposit \$50.
-	
-  	- \textbf{Withdraw Process} tries to withdraw \$120.
+\begin{itemize}
+\item 
+Initial Balance: \$100
 
-\textbf{Execution Flow:}
+\item 
+Transactions:
+\begin{itemize}
+\item 
+\textbf{Deposit Process} tries to deposit \$50.
 
-1. Both processes start concurrently.
+\item 
+\textbf{Withdraw Process} tries to withdraw \$120.
 
-2. The withdraw process checks the balance (\$100) and finds it insufficient for the \$120 withdrawal.
+\end{itemize}
 
-3. The withdraw process pauses, waiting for the deposit process to increase the balance.
+\end{itemize}
 
-4. The deposit process completes its deposit, increasing the balance to \$150.
+\sfbf{Execution Flow:}
 
-5. The withdraw process resumes and completes the \$120 withdrawal, leaving a balance of \$30.
+\begin{enumerate}
+\item 
+Both processes start concurrently.
 
-\textbf{Mutual Constraint Relationship}
+\item 
+The withdraw process checks the balance ($100) and finds it insufficient for the $120 withdrawal.
 
-- The withdraw process is constrained by the balance being insufficient.
+\item 
+The withdraw process pauses, waiting for the deposit process to increase the balance.
 
-- The deposit process is constrained by ensuring consistency in updating the shared balance.
+\item 
+The deposit process completes its deposit, increasing the balance to \$150.
 
-\textbf{Discontinuity in Execution}
+\item 
+The withdraw process resumes and completes the $120 withdrawal, leaving a balance of $30.
 
-- The withdraw process experiences discontinuity when it must wait for the balance to increase.
+\end{enumerate}
 
-- The deposit process may also experience discontinuity if it has to wait for exclusive access to the shared balance during synchronization.
+\sfbf{Mutual Constraint Relationship}
 
-\textbf{Key Takeaways}
+\begin{itemize}
+\item 
+The withdraw process is constrained by the balance being insufficient.
 
-- The discontinuity arises from the \textbf{mutual constraint relationship} between the deposit and withdraw processes.
+\item 
+The deposit process is constrained by ensuring consistency in updating the shared balance.
 
-- Proper synchronization mechanisms, such as locks or semaphores, are necessary to manage access to the shared balance and avoid conflicts, which further introduces discontinuity when one process waits for the other.
+\end{itemize}
+
+\sfbf{Discontinuity in Execution}
+
+\begin{itemize}
+\item 
+The withdraw process experiences discontinuity when it must wait for the balance to increase.
+
+\item 
+The deposit process may also experience discontinuity if it has to wait for exclusive access to the shared balance during synchronization.
+
+\end{itemize}
+
+\sfbf{Key Takeaways}
+
+
+\begin{itemize}
+\item 
+The discontinuity arises from the \textbf{mutual constraint relationship} between the deposit and withdraw processes.
+
+\item 
+Proper synchronization mechanisms, such as locks or semaphores, are necessary to manage access to the shared balance and avoid conflicts, which further introduces discontinuity when one process waits for the other.
+
+\end{itemize}
 
 \subsection{Closure and Reproducibility}
 
@@ -541,81 +991,138 @@ When a program is executed concurrently, it loses its closure and reproducibilit
 
 当程序并发执行时，它就失去了封闭性和可重复性。当程序并发执行时，多个程序会共享系统中的各种资源，因此这些资源的状态会被多个程序改变。这会导致程序失去封闭性和可重复性。什么是封闭性？什么是可重复性？请举例说明“当程序并发执行时，它就失去了封闭性和可重复性。”
 
-\subsubsection{Definitions}
+\sfbf{Definitions}
 
-1. \textbf{Closure}:  
-   
-   - \textbf{Definition}: Closure means that the behavior and outcome of a program are completely determined by its own code and input data, without being affected by any external factors.  
-   
-   - \textbf{Key Idea}: In a closed system, the program executes in isolation, and its execution is self-contained.
+\begin{enumerate}
+\item 
+\textbf{Closure}:
+\begin{itemize}
+\item 
+\textbf{Definition}: Closure means that the behavior and outcome of a program are completely determined by its own code and input data, without being affected by any external factors.
 
-2. \textbf{Reproducibility}:  
-   
-   - \textbf{Definition}: Reproducibility means that given the same input and environment, a program will always produce the same output and behavior.  
-   
-   - \textbf{Key Idea}: The program’s results are consistent and predictable when re-executed under identical conditions.
+\item 
+\textbf{Key Idea}: In a closed system, the program executes in isolation, and its execution is self-contained.
 
-\rule{0.75\textwidth}{0.5pt}
+\end{itemize}
 
-\subsubsection{Loss of Closure and Reproducibility in Concurrent Execution}
+\item 
+\textbf{Reproducibility}:
+\begin{itemize}
+\item 
+\textbf{Definition}: Reproducibility means that given the same input and environment, a program will always produce the same output and behavior.
+
+\item 
+\textbf{Key Idea}: The program’s results are consistent and predictable when re-executed under identical conditions.
+
+\end{itemize}
+
+\end{enumerate}
+
+\hrulefill
+
+\sfbf{Loss of Closure and Reproducibility in Concurrent Execution}
 
 \textbf{Example: File Writing by Concurrent Programs}
 
-\textbf{Scenario}:  
+\textbf{Scenario}:\newline
 Two concurrent programs, \textbf{Program A} and \textbf{Program B}, are designed to write data to a shared log file.
+\begin{itemize}
+\item 
+\textbf{Program A}: Writes the string "LogA" to the file.
 
-- \textbf{Program A}: Writes the string "LogA" to the file.  
+\item 
+\textbf{Program B}: Writes the string "LogB" to the same file.
 
-- \textbf{Program B}: Writes the string "LogB" to the same file.  
+\item 
+Both programs run concurrently, sharing the same file resource.
 
-- Both programs run concurrently, sharing the same file resource.
+\end{itemize}
 
-\rule{0.75\textwidth}{0.5pt}
+\hrulefill
 
 \textbf{Loss of Closure}:
+\begin{itemize}
+\item 
+When executed concurrently, the programs no longer operate in isolation because they share the file resource.
 
-- When executed concurrently, the programs no longer operate in isolation because they share the file resource.  
+\item 
+Program A's behavior and output are influenced by Program B's access to the file, and vice versa.
+\begin{itemize}
+\item 
+For example, if Program B writes to the file while Program A is writing, the data in the file might become interleaved or corrupted.
 
-- Program A's behavior and output are influenced by Program B's access to the file, and vice versa.    - For example, if Program B writes to the file while Program A is writing, the data in the file might become interleaved or corrupted.
-    
-    - Result: Program A's output is no longer determined solely by its code and input.
+\item 
+Result: Program A's output is no longer determined solely by its code and input.
 
-\rule{0.75\textwidth}{0.5pt}
+\end{itemize}
+
+\end{itemize}
+
+\hrulefill
 
 \textbf{Loss of Reproducibility}:
+\begin{itemize}
+\item 
+The output of the shared log file depends on the scheduling and interleaving of operations between Program A and Program B.
 
-- The output of the shared log file depends on the scheduling and interleaving of operations between Program A and Program B.  
+\item 
+If the programs are run multiple times under the same conditions:
+\begin{itemize}
+\item 
+One execution might produce:
 
-- If the programs are run multiple times under the same conditions:    - One execution might produce:
+\begin{lstlisting}[language=]
+LogA
+LogB
+\end{lstlisting}
 
-      LogA
-      LogB
-    
-    - Another execution might produce:
+\item 
+Another execution might produce:
 
-      LogB
-      LogA
-   
-    - Or even corrupted output like:
+\begin{lstlisting}[language=]
+LogB
+LogA
+\end{lstlisting}
 
-      LogALogB
+\item 
+Or even corrupted output like:
 
+\begin{lstlisting}[language=]
+LogALogB
+\end{lstlisting}
 
-- This happens because concurrent execution introduces non-deterministic factors such as thread scheduling, resource contention, or system interrupts.
+\end{itemize}
 
-\rule{0.75\textwidth}{0.5pt}
+\item 
+This happens because concurrent execution introduces non-deterministic factors such as thread scheduling, resource contention, or system interrupts.
 
-\textbf{Key Takeaways}
+\end{itemize}
 
-- \textbf{Loss of Closure}: Programs depend on shared resources (e.g., file, memory), so their behavior is influenced by other concurrent programs.
+\hrulefill
 
-- \textbf{Loss of Reproducibility}: Outputs vary due to non-deterministic interleaving of concurrent processes.
+\sfbf{Key Takeaways}
 
-\subsubsection{Solution to Preserve Closure and Reproducibility}
+\begin{itemize}
+\item 
+\textbf{Loss of Closure}: Programs depend on shared resources (e.g., file, memory), so their behavior is influenced by other concurrent programs.
 
-- Use synchronization mechanisms like \textbf{mutex locks} or \textbf{file access control} to ensure that only one program can access the shared resource at a time.
+\item 
+\textbf{Loss of Reproducibility}: Outputs vary due to non-deterministic interleaving of concurrent processes.
 
-- However, this introduces additional complexity and potential performance issues, illustrating the inherent challenges of concurrent execution.
+\end{itemize}
+
+\sfbf{Solution to Preserve Closure and Reproducibility}
+
+\begin{itemize}
+\item 
+Use synchronization mechanisms like \textbf{mutex locks} or \textbf{file access control} to ensure that only one program can access the shared resource at a time.
+
+\item 
+However, this introduces additional complexity and potential performance issues, illustrating the inherent challenges of concurrent execution.
+
+\end{itemize}
+
+\section{Process State}
 
 \subsection{Lifetime of a Process}
 
@@ -625,102 +1132,1585 @@ Dynamicity is the most basic characteristic of a process, which is generated by 
 
 动态性是进程最基本的特性，表现为由创建产生，由调度执行，因得不到资源而暂停执行，由撤销而消亡。 进程有一定的生命期，而程序只是一组有序的指令集和，是静态实体。请从操作系统的视角，用现实生活中的例子体现进程的创建、调度、得不到资源和撤销。
 
-\subsection{Real-Life Examples of Process Characteristics in the Operating System}
+\subsubsection{Real-Life Examples of Process Characteristics in the Operating System}
 
-\textbf{1. Creation of a Process}
+\sfbf{1. Creation of a Process}
 
-   - \textbf{Example}: Opening a web browser.
-     
-     - When a user clicks on the browser icon, the OS:
-       
-       - Loads the program code from storage into memory.
-       
-       - Initializes the process control block (PCB) with information about the process (e.g., memory allocation, CPU registers).
-       
-       - Marks the process as "ready" to execute.
-     
-     - This marks the creation of a new process.
-     
-\rule{0.75\textwidth}{0.5pt}
+\textbf{Example}: Opening a web browser.
+\begin{itemize}
+\item 
+When a user clicks on the browser icon, the OS:
+\begin{itemize}
+\item 
+Loads the program code from storage into memory.
 
+\item 
+Initializes the process control block (PCB) with information about the process (e.g., memory allocation, CPU registers).
 
-\textbf{2. Scheduling of a Process}
+\item 
+Marks the process as "ready" to execute.
 
-   - \textbf{Example}: Switching between a text editor and a music player.
-     
-     - The OS uses a CPU scheduler to decide which process gets CPU time:
-       
-       - If the text editor is currently active, the OS schedules it to run on the CPU.
-       
-       - Meanwhile, the music player runs in the background, scheduled periodically to ensure continuous playback.
-     
-     - Scheduling ensures fair distribution of CPU time among processes based on their priority and state.
+\end{itemize}
 
-\rule{0.75\textwidth}{0.5pt}
+\item 
+This marks the creation of a new process.
 
-\textbf{3. Suspension Due to Lack of Resources}
+\end{itemize}
 
-   - \textbf{Example}: Waiting for a file to download.
-     
-     - A file download process may be paused (suspended) while waiting for network data.
-       
-       - The process enters a "waiting" state because the required resource (network data) is unavailable.
-       
-       - The OS removes it from the CPU queue and resumes another process that has resources available, like a text editor.
-     
-     - Once the network data arrives, the OS transitions the download process back to the "ready" state.
+\hrulefill
 
-\rule{0.75\textwidth}{0.5pt}
+\sfbf{2. Scheduling of a Process}
 
-\textbf{4. Cancellation of a Process}
+\textbf{Example}: Switching between a text editor and a music player.
+\begin{itemize}
+\item 
+The OS uses a CPU scheduler to decide which process gets CPU time:
+\begin{itemize}
+\item 
+If the text editor is currently active, the OS schedules it to run on the CPU.
+
+\item 
+Meanwhile, the music player runs in the background, scheduled periodically to ensure continuous playback.
+
+\end{itemize}
+
+\item 
+Scheduling ensures fair distribution of CPU time among processes based on their priority and state.
+
+\end{itemize}
+
+\hrulefill
+
+\sfbf{3. Suspension Due to Lack of Resources}
+
+\textbf{Example}: Waiting for a file to download.
+\begin{itemize}
+\item 
+A file download process may be paused (suspended) while waiting for network data.
+\begin{itemize}
+\item 
+The process enters a "waiting" state because the required resource (network data) is unavailable.
+
+\item 
+The OS removes it from the CPU queue and resumes another process that has resources available, like a text editor.
+
+\end{itemize}
+
+\item 
+Once the network data arrives, the OS transitions the download process back to the "ready" state.
+
+\end{itemize}
+
+\hrulefill
+
+\sfbf{4. Cancellation of a Process}
 
 \textbf{Example}: Force-closing an unresponsive application.
-
 \begin{itemize}
 \item 
 If a program like a video player becomes unresponsive, the user might terminate it via the Task Manager (Windows) or Activity Monitor (macOS).
 \begin{itemize}
-\item The OS cancels the process by:
-
+\item 
+The OS cancels the process by:
 \begin{itemize}
-\item
+\item 
 Releasing allocated resources (e.g., memory, file handles).
-\item
+
+\item 
 Updating the process table to mark the process as "terminated."
-\item
+
+\item 
 Cleaning up associated data to prevent resource leaks.
+
 \end{itemize}
-\item
+
+\end{itemize}
+
+\item 
 This ends the life span of the process.
 
 \end{itemize}
+
+\hrulefill
+
+\sfbf{Summary of the Process Life Cycle in Real-Life Context}
+
+\begin{itemize}
+\item 
+\textbf{Creation}: Starting a new application (e.g., launching a web browser).
+
+\item 
+\textbf{Scheduling}: Alternating between tasks like editing a document and playing music.
+
+\item 
+\textbf{Suspension}: Waiting for resources like network data or user input.
+
+\item 
+\textbf{Cancellation}: Force-closing a stuck or unneeded program.
+
 \end{itemize}
 
-   - \textbf{Example}: Force-closing an unresponsive application.
-     
-     - If a program like a video player becomes unresponsive, the user might terminate it via the Task Manager (Windows) or Activity Monitor (macOS).
-       
-       - The OS cancels the process by:
-         
-         - Releasing allocated resources (e.g., memory, file handles).
-         
-         - Updating the process table to mark the process as "terminated."
-         
-         - Cleaning up associated data to prevent resource leaks.
-     
-     - This ends the life span of the process.
-
-\rule{0.75\textwidth}{0.5pt}
-
-\textbf{Summary of the Process Life Cycle in Real-Life Context}
-
-- \textbf{Creation}: Starting a new application (e.g., launching a web browser).
-
-- \textbf{Scheduling}: Alternating between tasks like editing a document and playing music.
-
-- \textbf{Suspension}: Waiting for resources like network data or user input.
-
-- \textbf{Cancellation}: Force-closing a stuck or unneeded program.
 These examples illustrate how the OS dynamically manages processes to ensure efficient use of system resources while meeting user demands.
+
+\subsubsection{Periodic Scheduling On Music Player}
+
+\begin{greenbox}
+How does the operating system use periodic sheduling to allow the music player to play audio continuously in the background?
+\end{greenbox}
+
+The operating system uses \textbf{periodic scheduling} to ensure that the music player plays audio smoothly in the background by allocating short, regular bursts of CPU time to the music player process, even while other processes are running in the foreground.
+
+\textbf{How Periodic Scheduling Works:}
+
+\begin{enumerate}
+\item
+\textbf{Time-Slicing with Preemptive Scheduling}:
+\begin{itemize}
+\item
+Modern operating systems use \textbf{preemptive multitasking}, where the CPU time is divided into short intervals called \textbf{time slices}.
+
+\item
+Each process, including the music player, gets a turn to use the CPU within these time slices.   
+
+\end{itemize}
+
+\item
+\textbf{Priority-Based Scheduling}:
+\begin{itemize}
+\item
+The OS assigns priorities to processes. A music player typically runs as a \textbf{background process} but may be assigned a moderately high priority to ensure audio playback is smooth and uninterrupted.
+
+\item
+Even if the user is interacting with a foreground application (e.g., a text editor), the scheduler ensures the music player gets periodic CPU time to process audio data.
+
+\end{itemize}
+
+\item
+\textbf{Audio Buffering}:
+\begin{itemize}
+\item
+The music player uses an \textbf{audio buffer}, a reserved memory area where audio data is preloaded before playback.
+
+\item
+During its scheduled time slices:
+\begin{itemize}
+\item
+The music player processes a chunk of audio data and fills the buffer for the next few seconds of playback.
+
+\item
+The OS ensures the audio hardware reads from the buffer, enabling seamless playback, even if the music player process isn't actively using the CPU.
+
+\end{itemize}
+
+\end{itemize}
+
+\item
+\textbf{Context Switching}:
+\begin{itemize}
+\item
+The scheduler performs \textbf{context switching} to switch the CPU between the music player and other processes.
+
+\item
+Each switch saves the current process's state and restores the next process's state, allowing the music player to resume from where it left off during its last time slice.
+
+\end{itemize}
+
+\end{enumerate}
+
+\hrulefill
+
+\textbf{Example of Scheduling in Action:}
+
+\begin{itemize}
+\item
+\textbf{Foreground Process}: The user is typing in a text editor.
+
+\item
+\textbf{Background Process}: The music player is decoding an MP3 file and updating the audio buffer.
+
+\end{itemize}
+
+The OS scheduler:
+\begin{enumerate}
+\item
+Allocates a short time slice to the music player periodically (e.g., every 10-50 milliseconds).  
+
+\item
+Ensures the music player processes enough audio data to keep the buffer full.
+
+\item
+Switches back to the foreground text editor or other processes.
+
+\end{enumerate}
+
+\hrulefill
+
+\textbf{Key Benefits:}
+
+\begin{itemize}
+\item
+\textbf{Continuous Playback}: The music player processes audio in time slices, keeping the buffer filled to avoid interruptions.
+
+\item
+\textbf{Efficient Resource Sharing}: The OS ensures other processes also get CPU time without starving the music player.
+
+\item
+\textbf{User Experience}: The user perceives smooth audio playback while multitasking.
+
+\end{itemize}
+
+By periodically scheduling the music player, the OS maintains a balance between real-time tasks (like audio playback) and other system processes.
+
+\subsection{Process State Transition}
+
+\begin{greenbox}
+There are 3 basic states of a process: ready, executing, and blocked. 
+
+The typical reasons for transitions between the three basic states are as follows:
+
+1. Ready -> Executing: The process is allocated CPU resources;
+
+2. Executing -> Ready: The time slice is exhausted;
+
+3. Executing -> Blocked: I/O request;
+
+4. Blocked -> Ready: I/O completed.
+
+Please use a few examples to present these 4 state transitions.
+\end{greenbox}
+
+进程有3种基本状态：就绪、执行和阻塞。
+
+3个基本状态之间转换的典型原因如下：
+
+1. 就绪 -> 执行： 进程分配到CPU资源；
+
+2. 执行 -> 就绪： 时间片用完；
+
+3. 执行 -> 阻塞： I/O请求；
+
+4. 阻塞 -> 就绪： I/O完成。
+
+请用几个例子呈现这4种状态转换。
+
+\sfbf{1. Ready → Executing (The process is allocated CPU resources)}
+
+\begin{itemize}
+\item 
+\textbf{Example}: A user clicks a "Run" button in an IDE to start a program.
+\begin{itemize}
+\item 
+The program is added to the \textbf{ready queue}, waiting for the CPU.
+
+\item 
+The CPU scheduler selects this program and allocates CPU time.
+
+\item 
+Transition: The process moves from the \textbf{Ready} state to the \textbf{Executing} state, where it begins running its instructions.
+
+\end{itemize}
+
+\end{itemize}
+
+\hrulefill
+
+\sfbf{2. Executing → Ready (The time slice is exhausted)}
+
+\begin{itemize}
+\item 
+\textbf{Example}: A simulation program and a video processing application running simultaneously.
+\begin{itemize}
+\item 
+The simulation program is calculating weather forecasts.
+
+\item 
+During its CPU time slice, it performs a chunk of computations.
+
+\item 
+When the time slice ends, the OS preempts the simulation program and moves it to the \textbf{Ready} queue.
+
+\item 
+The CPU is then allocated to the video processing application or another process.
+
+\item
+The simulation program moves from the \textbf{Executing} state to the \textbf{Ready} state, where it waits for its next turn to continue execution.
+\end{itemize}
+
+\end{itemize}
+
+\hrulefill
+
+\sfbf{3. Executing → Blocked (I/O request)}
+
+\begin{itemize}
+\item 
+\textbf{Example}: A browser is loading a webpage.
+\begin{itemize}
+\item 
+The browser starts executing instructions to render the page but encounters an operation that requires data from the network (e.g., downloading images or scripts).
+
+\item 
+The browser makes an I/O request to retrieve data from the network.
+
+\item 
+Since the I/O operation is not immediate, the process enters the \textbf{Blocked} state, waiting for the data.
+
+\item 
+Transition: The browser process moves from the \textbf{Executing} state to the \textbf{Blocked} state.
+
+\end{itemize}
+
+\end{itemize}
+
+\hrulefill
+
+\sfbf{4. Blocked → Ready (I/O completed)}
+
+\begin{itemize}
+\item 
+\textbf{Example}: The browser's network request for webpage data completes.
+\begin{itemize}
+\item 
+The requested data is received, and the I/O operation concludes.
+
+\item 
+The OS moves the browser process back to the \textbf{Ready} queue, signaling it is ready to resume execution when the CPU is available.
+
+\item 
+Transition: The browser process moves from the \textbf{Blocked} state to the \textbf{Ready} state.
+
+\end{itemize}
+
+\end{itemize}
+
+\hrulefill
+
+\sfbf{Summary of Transitions}
+
+\begin{itemize}
+\item 
+\textbf{Ready → Executing}: The process gains CPU time.
+
+\item 
+\textbf{Executing → Ready}: The process is preempted after using its CPU time slice.
+
+\item 
+\textbf{Executing → Blocked}: The process requests I/O and must wait.
+
+\item 
+\textbf{Blocked → Ready}: The I/O operation completes, and the process is ready to run again.
+
+\end{itemize}
+
+These transitions enable the OS to manage processes efficiently, ensuring fair resource allocation and smooth multitasking.
+
+\subsection{Process Creation}
+
+\begin{greenbox}
+The main events that cause process creation are:
+
+1. User login;
+
+2. Job scheduling;
+
+3. Service provision;
+
+4. Application request.
+
+Please list specific cases of job scheduling, service provision and application request that cause process creation.
+\end{greenbox}
+
+引起进程创建的主要事件有：
+
+1. 用户登录；
+
+2. 作业调度；
+
+3. 提供服务；
+
+4. 应用请求。
+
+请你列出引起进程创建的作业调度、提供服务和应用请求的具体案例。
+
+\sfbf{Job Scheduling}
+
+\begin{enumerate}
+\item 
+\textbf{Batch Processing Jobs}: A system schedules a batch job, such as nightly data backups or financial report generation, creating a new process to execute the job.
+
+\item 
+\textbf{Cron Jobs}: In UNIX-like systems, a \verb|cron| scheduler triggers processes at specified times (e.g., running a script to clean temporary files).
+
+\item 
+\textbf{Parallel Processing Tasks}: A distributed system schedules tasks for computation, such as rendering frames in animation or processing large datasets.
+
+\item 
+\textbf{Print Queue Management}: A process is created to handle a new print job from the print queue.
+
+\item 
+\textbf{Operating System Boot-Up}: Initial jobs like setting up network interfaces or launching system services are scheduled and lead to process creation.
+
+\end{enumerate}
+
+\sfbf{Service Provision}
+
+\begin{enumerate}
+\item 
+\textbf{Web Server Request Handling}: A web server (e.g., Apache or Nginx) spawns a process to handle an incoming HTTP request.
+
+\item 
+\textbf{Database Connection Handling}: A database server creates a process or thread for each client connection to execute queries.
+
+\item 
+\textbf{File Transfer Service}: An FTP server spawns a process to handle a user's upload or download request.
+
+\item 
+\textbf{Authentication Services}: A system service spawns a process to authenticate a user logging in remotely (e.g., via SSH).
+
+\item 
+\textbf{Mail Server}: An email service (e.g., SMTP or IMAP server) spawns a process to send or fetch emails for a client.
+
+\end{enumerate}
+
+\sfbf{Application Request}
+
+\begin{enumerate}
+\item 
+\textbf{Running a New Program}: A user launches an application (e.g., a browser, video player, or office suite), and the system creates a new process for it.
+
+\item 
+\textbf{Compiling Code}: An IDE or command-line compiler (e.g., GCC) spawns a process to compile the source code.
+
+\item 
+\textbf{Executing Shell Commands}: A shell script or command (\verb|ls|, \verb|grep|, etc.) invokes new processes during its execution.
+
+\item 
+\textbf{Multithreaded Applications}: An application requests the operating system to create new processes to perform specific tasks, such as data fetching or background computation.
+
+\item 
+\textbf{Game Engines}: A game launches separate processes for rendering, physics simulation, or server-side game logic.
+
+\end{enumerate}
+
+\hrulefill
+
+Each of these examples demonstrates how specific system-level or user-level activities lead to process creation under the given categories.
+
+\subsection{Process Revoke}
+
+\begin{greenbox}
+The main events that cause a process to be revoked are:
+
+1. Normal termination;
+
+2. Abnormal termination;
+
+3. External intervention (operator or operating system intervention, parent process request, parent process termination).
+
+Please list specific examples of these events.
+\end{greenbox}
+
+引起进程被撤销的主要事件有：
+
+1. 正常结束；
+
+2. 异常结束；
+
+3. 外界干预（操作员或操作系统干预、父进程请求、父进程终止）。
+
+请你列出这些事件的具体案例。
+
+\sfbf{1. Normal Termination}
+
+\begin{itemize}
+\item 
+\textbf{User Logoff}: A process ends normally when a user logs out, closing their applications (e.g., a text editor or browser).
+
+\item 
+\textbf{Completion of a Job}: A batch processing job completes its task (e.g., generating a payroll report) and terminates.
+
+\item 
+\textbf{Script Execution Completion}: A shell script finishes executing its last command.
+
+\item 
+\textbf{Application Closure}: A user exits a running application (e.g., closing a word processor or a media player).
+
+\item 
+\textbf{System Services Shutdown}: During system shutdown, services terminate gracefully (e.g., stopping a web server like Apache).
+
+\end{itemize}
+
+\hrulefill
+
+\sfbf{2. Abnormal Termination}
+
+\begin{itemize}
+\item 
+\textbf{Segmentation Fault (Segfault)}: A process tries to access invalid memory, leading to termination by the operating system.
+
+\item 
+\textbf{Unhandled Exception}: A program crashes due to an unhandled runtime error (e.g., division by zero or null pointer dereference).
+
+\item 
+\textbf{Resource Exhaustion}: A process consumes excessive resources (e.g., memory or CPU) and is forcibly terminated by the system.
+
+\item 
+\textbf{Infinite Loop with Watchdog Timer}: A system watchdog timer detects a process stuck in an infinite loop and terminates it.
+
+\item 
+\textbf{Failure to Meet Real-Time Deadline}: In a real-time system, a task is terminated if it cannot meet its timing constraints.
+
+\end{itemize}
+
+\hrulefill
+
+\sfbf{3. External Intervention}
+
+\textbf{a. Operator or Operating System Intervention}
+
+\begin{itemize}
+\item 
+\textbf{Administrator Command}: An admin kills a misbehaving process using commands like \verb|kill| in UNIX or Task Manager in Windows.
+
+\item 
+\textbf{System Reboot}: During a system reboot, all running processes are terminated.
+
+\item 
+\textbf{Security Violation}: A process is terminated by the system for unauthorized access or behavior, such as attempting to read restricted files.
+
+\item 
+\textbf{Software Update}: The operating system terminates outdated processes to update software or services.
+
+\end{itemize}
+
+\textbf{b. Parent Process Request}
+
+\begin{itemize}
+\item 
+\textbf{Process Forking Failure}: A parent process explicitly terminates a child process if it fails to complete its task correctly.
+
+\item 
+\textbf{Timeout Management}: A parent process spawns a child process to perform a task, but if the task exceeds the allowed time, the parent terminates it.
+
+\item 
+\textbf{Pooled Resource Reclamation}: A parent process in a worker pool model terminates idle worker processes when they are no longer needed.
+
+\end{itemize}
+
+\textbf{c. Parent Process Termination}
+
+\begin{itemize}
+\item 
+\textbf{Parent Crash}: When a parent process crashes, all its child processes are terminated (unless explicitly detached).
+
+\item 
+\textbf{Parent Shutdown Command}: A parent process ends gracefully and sends termination signals to all its children.
+
+\end{itemize}
+
+\hrulefill
+
+These examples illustrate the diverse scenarios under which process revocation can occur, categorized by the cause of termination.
+
+\subsection{Process Blocked or Awakened}
+
+\begin{greenbox}
+The main events that cause a process to be blocked or awakened are:
+
+1. Requesting system services;
+
+2. Starting an operation;
+
+3. New data has not yet arrived;
+
+4. No new work can be done.
+
+Please list specific examples of these events.
+\end{greenbox}
+
+引起进程阻塞或被唤醒的主要事件有：
+
+1. 请求系统服务；
+
+2. 启动某种操作；
+
+3. 新数据尚未到达；
+
+4. 无新工作可做。
+
+请你列出这些事件的具体案例。
+
+\sfbf{1. Requesting System Services}
+
+\textbf{Blocked}
+\begin{itemize}
+\item 
+\textbf{File I/O}: A process requests to read a large file from disk, and the operating system blocks the process until the data is loaded into memory.
+
+\item 
+\textbf{Database Query}: A process sends a query to a database and waits for the results to be returned.
+
+\item 
+\textbf{Device Communication}: A process sends a request to a hardware device (e.g., a printer or network card) and is blocked until the device responds.
+
+\item 
+\textbf{Semaphore/Lock Acquisition}: A process attempts to acquire a lock or semaphore that is already held by another process.
+
+\textbf{Awakened}
+
+\item 
+\textbf{File Read Completion}: The requested file data is loaded, and the process resumes execution.
+
+\item 
+\textbf{Database Response}: The query results are returned from the database, allowing the process to continue.
+
+\item 
+\textbf{Device Ready Signal}: The hardware device signals that the operation is complete, unblocking the process.
+
+\item 
+\textbf{Lock Released}: Another process releases the semaphore or lock, enabling the waiting process to acquire it.
+
+\end{itemize}
+
+\hrulefill
+
+\sfbf{2. Starting an Operation}
+
+\textbf{Blocked}
+\begin{itemize}
+\item 
+\textbf{Asynchronous Task Submission}: A process submits a task (e.g., sending a packet over the network) and waits for its completion.
+
+\item 
+\textbf{Child Process Creation}: A parent process waits for a child process to complete an operation before proceeding.
+
+\item 
+\textbf{Data Processing Task}: A task is dispatched to another thread or process, and the original process waits for the result.
+
+\textbf{Awakened}
+
+\item 
+\textbf{Task Completion Notification}: The asynchronous operation completes, and the process is signaled to resume.
+
+\item 
+\textbf{Child Process Exit}: The child process finishes its operation, notifying the parent process to proceed.
+
+\item 
+\textbf{Result Ready}: The dispatched data processing task completes, enabling the process to continue.
+
+\end{itemize}
+
+\hrulefill
+
+\sfbf{3. New Data Has Not Yet Arrived}
+
+\textbf{Blocked}
+\begin{itemize}
+\item 
+\textbf{Network Communication}: A process is waiting for a response from a remote server (e.g., during an HTTP request or a database query).
+
+\item 
+\textbf{Input from User}: A process is waiting for input from the user (e.g., entering text in a terminal or clicking a button in a GUI).
+
+\item 
+\textbf{Sensor Input}: A process is waiting for data from a physical sensor (e.g., a temperature reading or motion detection).
+
+\textbf{Awakened}
+
+\item 
+\textbf{Data Received}: The expected data arrives over the network, unblocking the process.
+
+\item 
+\textbf{User Input Provided}: The user enters the required information or interacts with the interface.
+
+\item 
+\textbf{Sensor Data Available}: The physical sensor reports new data, allowing the process to resume its work.
+
+\end{itemize}
+
+\hrulefill
+
+\sfbf{4. No New Work Can Be Done}
+
+\textbf{Blocked}
+\begin{itemize}
+\item 
+\textbf{Job Queue Empty}: A worker process in a job queue waits for new tasks to arrive.
+
+\item 
+\textbf{Resource Exhaustion}: A process needs additional resources (e.g., memory or CPU) to continue, but they are currently unavailable.
+
+\item 
+\textbf{End of File (EOF)}: A process reading a file reaches the end and has no more data to process.
+
+\textbf{Awakened}
+
+\item 
+\textbf{New Job Arrival}: A new task is added to the job queue, waking the waiting process to handle it.
+
+\item 
+\textbf{Resource Availability}: The required resource (e.g., memory) becomes available, unblocking the process.
+
+\item 
+\textbf{File Update}: New data is appended to a file, allowing the process to resume reading.
+
+\end{itemize}
+
+\subsection{Entering the Suspended State}
+
+\begin{greenbox}
+Regarding processes, the operating system introduces a suspended state. The operating system will suspend a process in the following situations:
+
+1. End user request;
+
+2. Parent process request;
+
+3. Load regulation needs;
+
+4. Operating system needs.
+
+Please explain with specific examples.
+\end{greenbox}
+
+关于进程，操作系统引入了挂起的状态。操作系统在以下情况会挂起进程，
+
+1. 终端用户请求；
+
+2. 父进程请求；
+
+3. 负荷调节的需要；
+
+4. 操作系统的需要。
+
+请结合具体例子讲解。
+
+
+The \textbf{suspended state} occurs when a process is temporarily paused, and its resources (except storage) are freed. The process remains in the system but is not eligible for immediate execution. Here are examples of situations where the operating system suspends a process:
+
+\hrulefill
+
+\textbf{1. End User Request}
+
+\textbf{Example}: A user pauses a video streaming application.
+\begin{itemize}
+\item 
+The user clicks the "Pause" button in a media player.
+
+\item 
+The OS suspends the video playback process, stopping resource usage like CPU or network bandwidth.
+
+\item 
+The process is placed into the \textbf{suspended} state, waiting for the user to resume playback.
+
+\end{itemize}
+
+\hrulefill
+
+\textbf{2. Parent Process Request}
+
+\textbf{Example}: A debugger suspends a process being analyzed.
+\begin{itemize}
+\item 
+A developer uses a debugger (e.g., \verb|gdb|) to analyze a program.
+
+\item 
+The debugger sends a signal to suspend the target process at a breakpoint.
+
+\item 
+This allows the developer to examine variables, memory state, and other debugging details without the process running further.
+
+\item 
+The debugged process enters the \textbf{suspended} state until the debugger signals it to continue.
+
+\end{itemize}
+
+\hrulefill
+
+\textbf{3. Load Regulation Needs}
+
+\textbf{Example}: Background processes during heavy system load.
+\begin{itemize}
+\item 
+A backup program is running during system operation.
+
+\item 
+If the system detects high CPU or memory usage from active user tasks, the OS suspends the backup process to prioritize foreground tasks.
+
+\item 
+The backup process enters the \textbf{suspended} state and resumes later when system load decreases.
+
+\end{itemize}
+
+\hrulefill
+
+\textbf{4. Operating System Needs}
+
+\textbf{Example}: Swapping processes to free up memory.
+\begin{itemize}
+\item 
+In low-memory situations, the OS may suspend a low-priority process (e.g., a background indexing service) to reclaim its memory for higher-priority tasks.
+
+\item 
+The process is saved to disk (swapped out) and moved to the \textbf{suspended} state.
+
+\item 
+Once memory becomes available, the process can be swapped back into memory and resumed.
+
+\end{itemize}
+
+\hrulefill
+
+\sfbf{Summary of Scenarios}
+
+\begin{tabular}{l|p{8cm}}
+\hline
+\textbf{Reason} & \textbf{Example} \\
+\hline
+\textbf{End User Request} & Pausing a video streaming application. \\
+\hline
+\textbf{Parent Process Request} & Debugging a program where the parent debugger pauses the child process. \\
+\hline
+\textbf{Load Regulation Needs} & Suspending a backup program during high system load. \\
+\hline
+\textbf{Operating System Needs} & Swapping out a background process to free memory for critical tasks. \\
+\hline
+\end{tabular}
+
+The suspended state enhances resource management and responsiveness, allowing the operating system to prioritize tasks efficiently while retaining the ability to resume suspended processes later.
+
+\subsection{Suspended State: Debugging}
+
+In the context of debugging, the \textbf{debugger} typically acts as the \textbf{parent process}, and the \textbf{program being debugged} is the \textbf{child process}.
+
+\sfbf{How It Works:}
+
+\begin{enumerate}
+\item 
+When a debugger (e.g., \verb|gdb|) attaches to or launches a program for debugging:
+\begin{itemize}
+\item 
+The debugger becomes the parent process.
+
+\item 
+The program being debugged is created or controlled as the child process.
+
+\end{itemize}
+
+\item 
+\textbf{Control Relationship}:
+\begin{itemize}
+\item 
+The debugger can issue commands to the child process, such as:
+\begin{itemize}
+\item 
+\textbf{Suspend}: Stop the execution of the child process at a breakpoint.
+
+\item 
+\textbf{Resume}: Allow the child process to continue execution.
+
+\item 
+\textbf{Inspect}: Examine the child process's memory, variables, or registers.
+
+\end{itemize}
+
+\end{itemize}
+
+\item 
+\textbf{Parent-Child Hierarchy}:
+\begin{itemize}
+\item 
+The parent (debugger) monitors the execution of the child (debugged program) by using system calls like \verb|ptrace| in Unix-based systems.
+
+\item 
+The debugger typically receives notifications of events in the child process, such as system calls, signals, or exceptions.
+
+\end{itemize}
+
+\end{enumerate}
+
+\sfbf{Example:}
+
+\begin{itemize}
+\item 
+A developer starts debugging a program:
+
+\begin{lstlisting}[language=bash]
+gdb ./program
+\end{lstlisting}
+
+\begin{itemize}
+\item 
+\verb|gdb| (parent process) launches \verb|program| (child process).
+
+\item 
+If \verb|program| hits a breakpoint or an error, the debugger can suspend and control it.
+
+\end{itemize}
+
+\end{itemize}
+
+This parent-child relationship enables the debugger to effectively control and monitor the program being debugged.
+
+\subsection{Suspended State: Swapping}
+
+Processes are swapped out and moved to the \textbf{suspended state} primarily when the operating system needs to free up physical memory for higher-priority tasks or to optimize overall system performance. Below are specific situations and types of processes that are typically swapped out:
+
+\hrulefill
+
+\textbf{1. Low-Priority Background Processes}
+
+\begin{itemize}
+\item 
+\textbf{Situation}: When system resources are under heavy demand (e.g., during multitasking or memory-intensive operations).
+
+\item 
+\textbf{Example}: A background indexing service (like a search indexer or backup utility) might be swapped out if it isn't immediately needed by the user.
+
+\item 
+\textbf{Reason}: These processes do not have real-time requirements, so the OS can delay their execution without noticeable impact.
+\end{itemize}
+
+\hrulefill
+
+\textbf{2. Idle Processes}
+
+\begin{itemize}
+\item 
+\textbf{Situation}: When a process is waiting for an event, such as user input or a network response.
+
+\item 
+\textbf{Example}: A process monitoring a network connection might be idle while waiting for data packets.
+
+\item 
+\textbf{Reason}: Swapping out these processes frees up memory for active processes while preserving the state of the idle process on disk.
+
+\end{itemize}
+
+\hrulefill
+
+\textbf{3. Memory-Intensive but Non-Urgent Processes}
+
+\begin{itemize}
+\item 
+\textbf{Situation}: When multiple memory-heavy processes are competing for limited RAM.
+
+\item 
+\textbf{Example}: A large data analysis program running in the background might be swapped out to make room for a high-priority task like video editing or gaming.
+
+\item 
+\textbf{Reason}: The OS prioritizes active and user-focused processes over computationally intensive but non-urgent tasks.
+
+\end{itemize}
+
+\hrulefill
+
+\textbf{4. Processes with Lower Scheduling Priority}
+
+\begin{itemize}
+\item 
+\textbf{Situation}: When the system enforces priority-based scheduling and higher-priority processes demand resources.
+
+\item 
+\textbf{Example}: A process running a batch job (e.g., a report generation script) could be swapped out in favor of an interactive task, like handling user inputs in a GUI application.
+
+\item 
+\textbf{Reason}: Interactive tasks improve the perceived responsiveness of the system, so batch jobs are deprioritized.
+
+\end{itemize}
+
+\hrulefill
+
+\textbf{5. Processes with High I/O Latency}
+
+\begin{itemize}
+\item 
+\textbf{Situation}: When a process is blocked waiting for I/O operations, such as reading or writing large files.
+
+\item 
+\textbf{Example}: A file compression tool might be swapped out while waiting for the completion of a disk write operation.
+
+\item 
+\textbf{Reason}: During the I/O wait, the process doesn’t need CPU or memory, so the OS can reclaim those resources temporarily.
+
+\end{itemize}
+
+\hrulefill
+
+\textbf{6. Preemptive Swapping for Critical Tasks}
+
+\begin{itemize}
+\item 
+\textbf{Situation}: When the system needs to prioritize critical or real-time tasks, such as emergency system updates or kernel operations.
+
+\item 
+\textbf{Example}: A user might be running a simulation, but the OS swaps out the simulation process to allocate resources for a system-critical process like handling network interruptions.
+
+\item 
+\textbf{Reason}: Ensures the system remains operational and meets urgent demands.
+
+\end{itemize}
+
+\hrulefill
+
+\textbf{Key Factors Influencing Swapping Decisions}
+
+\begin{itemize}
+\item 
+\textbf{Memory Usage}: Processes consuming large amounts of memory are more likely to be swapped out during memory shortages.
+
+\item 
+\textbf{Priority}: Low-priority processes are more likely to be swapped out than high-priority ones.
+
+\item 
+\textbf{Activity State}: Processes in a "waiting" or "blocked" state are often swapped out, as they are not actively using the CPU.
+
+\item 
+\textbf{Time Sensitivity}: Time-sensitive tasks (e.g., interactive or real-time processes) are protected, while non-urgent processes are swapped.
+
+\end{itemize}
+
+\hrulefill
+
+\textbf{Consequences of Swapping}
+
+\begin{itemize}
+\item 
+\textbf{Performance Impact}: Swapping adds overhead, as processes need to be saved to disk and reloaded later, which is slower than keeping them in memory.
+
+\item 
+\textbf{Resource Optimization}: Swapping enables the OS to run more processes simultaneously, balancing the demands of memory and CPU usage.
+
+\end{itemize}
+
+Swapping is a last-resort mechanism to maintain system stability and performance in resource-constrained situations. It’s most commonly seen in systems with high workloads or limited physical memory.
+
+\subsection{Entry Section and Exit Section Code in Process Synchronization}
+
+\begin{greenbox}
+What are the "entry section" code and the "exit section" code? Why should the process execute the "entry section" code before entering the critical section? And why should the "exit section" code be executed before exiting? Please explain with examples.
+\end{greenbox}
+
+“进入区”代码和“退出区”代码是什么？为什么进程在进入临界区之前应先执行“进入区”代码？而在退出前又要执行“退出区”代码？请结合例子阐述。
+
+In process synchronization, particularly when dealing with the \textbf{Critical Section Problem}, the \textbf{entry section} and \textbf{exit section} codes are mechanisms used to ensure mutual exclusion, prevent race conditions, and maintain process synchronization.
+
+\hrulefill
+
+\sfbf{1. Definitions}
+
+\begin{itemize}
+\item 
+\textbf{Critical Section}: A segment of code where a process accesses shared resources (e.g., memory, files, or variables). Only one process can execute in the critical section at a time to prevent inconsistency.
+
+\item 
+\textbf{Entry Section Code}: Code that a process executes before entering the critical section to ensure mutual exclusion. It prevents other processes from entering the critical section simultaneously.
+
+\item 
+\textbf{Exit Section Code}: Code that a process executes after leaving the critical section to release the lock or signal other processes waiting for the resource.
+
+\end{itemize}
+
+\hrulefill
+
+\sfbf{2. Importance of Entry and Exit Section Code}
+
+\textbf{Why execute entry section code before entering the critical section?}
+
+\begin{itemize}
+\item 
+\textbf{Mutual Exclusion}: The entry section ensures only one process can enter the critical section at a time.
+
+\item 
+\textbf{Avoid Race Conditions}: Without the entry section, multiple processes might simultaneously modify shared resources, leading to data inconsistency or corruption.
+
+\end{itemize}
+
+\sfbf{Why execute exit section code before exiting the critical section?}
+
+\begin{itemize}
+\item 
+\textbf{Resource Availability}: The exit section allows other waiting processes to access the critical section.
+
+\item 
+\textbf{Prevent Deadlock}: Without the exit section, a process might hold onto the critical section indefinitely, blocking others.
+
+\end{itemize}
+
+\hrulefill
+
+\sfbf{3. Example}
+
+\textbf{Problem: Shared Counter Increment}
+
+Two processes increment a shared counter \verb|count| in a critical section.
+
+\begin{minted}[frame=lines, fontsize=\normalsize]{c}
+int count = 0; // Shared variable
+int lock = 0;  // Mutex lock
+
+void process1() {
+    // Entry Section
+    while (__sync_lock_test_and_set(&lock, 1)) {
+        // Busy wait
+    }
+    
+    // Critical Section
+    count = count + 1;
+
+    // Exit Section
+    __sync_lock_release(&lock);
+}
+
+void process2() {
+    // Entry Section
+    while (__sync_lock_test_and_set(&lock, 1)) {
+        // Busy wait
+    }
+    
+    // Critical Section
+    count = count + 1;
+
+    // Exit Section
+    __sync_lock_release(&lock);
+}
+\end{minted}
+
+\hrulefill
+
+\textbf{Explanation}
+
+\begin{enumerate}
+\item 
+\textbf{Entry Section Code}: The \verb|__sync_lock_test_and_set| ensures that only one process can enter the critical section. If \verb|lock == 1|, the process must wait. This prevents race conditions.
+
+\item 
+\textbf{Critical Section Code}: Both processes increment the shared variable \verb|count|. Without the entry section, simultaneous execution could corrupt the counter (e.g., both read \verb|count = 0|, increment to \verb|1|, and write back, losing an increment).
+
+\item 
+\textbf{Exit Section Code}: The \verb|__sync_lock_release| resets \verb|lock = 0|, signaling that the critical section is available for other processes.
+
+\end{enumerate}
+
+\hrulefill
+
+\sfbf{4. Consequences of Skipping Entry or Exit Section}
+
+\begin{itemize}
+\item 
+\textbf{No Entry Section}: Multiple processes might enter the critical section simultaneously, leading to race conditions and inconsistent data.
+
+\item 
+\textbf{No Exit Section}: The critical section remains locked indefinitely, causing deadlock and preventing other processes from progressing.
+
+\end{itemize}
+
+\hrulefill
+
+By properly implementing the \textbf{entry section} and \textbf{exit section}, process synchronization ensures reliable and consistent access to shared resources.
+
+\section{Process Synchronization}
+
+\subsection{Principles}
+
+Process synchronization ensures that concurrent processes operate correctly when sharing resources. The principles "let in when idle," "wait when busy," "limited wait," and "give way to wait" are guidelines for designing synchronization mechanisms. Here’s an analysis with examples:
+
+\hrulefill
+
+\sfbf{1. Let In When Idle}
+
+\begin{itemize}
+\item 
+\textbf{Principle}: If a resource is idle (not in use), any process requesting access to it should be allowed to proceed immediately.
+
+\item 
+\textbf{Example}: A printer queue.
+\begin{itemize}
+\item 
+Scenario: If no jobs are currently being printed and a process submits a print job, it should be granted immediate access to the printer.
+
+\item 
+Mechanism: A semaphore with an initial value of 1 (indicating the printer is available) allows the process to acquire the semaphore and start printing.
+
+\end{itemize}
+
+\end{itemize}
+
+\sfbf{2. Wait When Busy}
+
+\begin{itemize}
+\item 
+\textbf{Principle}: If a resource is already in use, any process requesting access to it should wait until it becomes available.
+
+\item 
+\textbf{Example}: Database transaction locking.
+\begin{itemize}
+\item 
+Scenario: A process locks a record in a database to update it. Other processes trying to access the same record must wait until the lock is released.
+
+\item 
+Mechanism: A mutex ensures that only one process can access the critical section (record) at a time, making other processes wait if the mutex is locked.
+
+\end{itemize}
+
+\end{itemize}
+
+\sfbf{3. Limited Wait}
+
+\begin{itemize}
+\item 
+\textbf{Principle}: A process waiting for access to a resource should not wait indefinitely; there should be a bound on the waiting time (to avoid starvation).
+
+\item 
+\textbf{Example}: Fair CPU scheduling.
+\begin{itemize}
+\item 
+Scenario: In a multi-programming environment, each process gets a limited time slice to execute. If a process waits for the CPU, it is guaranteed to get its turn eventually.
+
+\item 
+Mechanism: Round-robin scheduling(循环调度) ensures that each process gets CPU time in a fair manner, preventing any process from being indefinitely delayed.
+
+\end{itemize}
+
+\end{itemize}
+
+\sfbf{4. Give Way to Wait}
+
+\begin{itemize}
+\item 
+\textbf{Principle}: A process holding a resource but unable to proceed should release the resource and allow other processes to use it.
+
+\item 
+\textbf{Example}: Producer-Consumer Problem.
+\begin{itemize}
+\item 
+Scenario: A producer is producing items into a buffer, but the buffer is full. The producer should stop producing and give way to the consumer to consume items from the buffer.
+
+\item 
+Mechanism: Condition variables or semaphores signal the consumer process to resume when the producer is blocked. Once the consumer consumes items, the producer can resume production.
+
+\end{itemize}
+
+\end{itemize}
+
+\sfbf{Summary Table of Principles}
+
+\begin{tabular}{l|p{4cm}|p{7cm}}
+\hline
+\textbf{Principle} & \textbf{Key Idea} & \textbf{Example} \\
+\hline
+\textbf{Let in when idle} & Grant immediate access if resource is free. & Printer queue allows immediate printing. \\
+\hline
+\textbf{Wait when busy} & Block processes until the resource is free. & Database locking prevents simultaneous access. \\
+\hline
+\textbf{Limited wait} & Avoid indefinite waiting (prevent starvation). & Round-robin CPU scheduling. \\
+\hline
+\textbf{Give way to wait} & Release resource if unable to proceed. & Producer stops when buffer is full. \\
+\hline
+\end{tabular}
+
+By adhering to these principles, synchronization mechanisms ensure fairness, efficiency, and correctness in concurrent systems.
+
+\chapter{Appendix A - }
+
+\section{Control and Describe Process}
+
+\begin{greenbox}
+There are two examples of concurrent execution of processes: 
+
+1. A web server (such as Apache or Nginx) handles multiple client requests at the same time. 
+
+2. A web browser downloads a file while rendering a web page. 
+
+However, threads can also achieve both scenarios, right?
+\end{greenbox}
+
+关于进程的并发执行有两个例子：1. 网络服务器（例如Apache或Nginx）同时处理多个客户端请求。2. 网络浏览器一边下载文件一边渲染网页。然而，线程也可以实现两个场景吧？
+
+Yes, threads can achieve both scenarios as well because threads are designed for concurrent execution within the same process. Threads share the same memory and resources of their parent process, making them lightweight and well-suited for handling concurrent tasks.
+
+\sfbf{Comparison of Processes vs. Threads for the Two Examples}
+
+\textbf{1. Web Server Handling Multiple Client Requests}
+
+\begin{itemize}
+\item 
+\textbf{Using Processes}:
+\begin{itemize}
+\item 
+Each client request is handled by a separate process.
+
+\item 
+The web server creates a new process for every request or uses a pool of pre-created worker processes.
+
+\item 
+Example: In a traditional \textbf{multiprocess model}, Apache spawns multiple processes where each process handles a single client connection.
+
+\end{itemize}
+
+\item 
+\textbf{Using Threads}:
+
+\begin{itemize}
+\item 
+Each client request is handled by a separate thread within a single server process.
+
+\item 
+Threads can share resources (e.g., memory for session data), reducing the overhead compared to creating and managing processes.
+
+\item 
+Example: Modern servers like \textbf{Nginx} or multi-threaded Apache modes use threads to handle high concurrency efficiently.
+
+\end{itemize}
+
+\end{itemize}
+
+\hrulefill
+
+\textbf{2. Web Browser Downloading a File While Rendering a Web Page}
+
+\begin{itemize}
+\item 
+\textbf{Using Processes}:
+
+\begin{itemize}
+\item 
+The browser can spawn one process to handle the file download and another to render the web page.
+
+\item 
+This approach isolates the tasks, ensuring that a crash in one process (e.g., download) does not affect the other (e.g., page rendering).
+
+\end{itemize}
+
+\item 
+\textbf{Using Threads}:
+\begin{itemize}
+\item 
+The browser can use multiple threads within the same process to handle these tasks concurrently.
+
+\item 
+One thread can manage the file download while another handles rendering the page, sharing the same memory and state for efficiency.
+
+\item 
+Example: Modern browsers often use a combination of threads and processes, where a thread within the page-rendering process handles specific tasks like rendering or networking.
+
+\end{itemize}
+
+\end{itemize}
+
+\hrulefill
+
+\sfbf{Advantages of Threads Over Processes}
+
+\begin{enumerate}
+\item 
+\textbf{Lower Overhead}:
+\begin{itemize}
+\item 
+Threads are more lightweight compared to processes because they share the same memory and resources.
+
+\item 
+Creating or switching between threads incurs less overhead than creating or switching between processes.
+
+\end{itemize}
+
+\item 
+
+\textbf{Shared Memory}:
+
+\begin{itemize}
+\item 
+Threads within the same process can easily communicate and share data without needing inter-process communication (IPC) mechanisms.
+
+\end{itemize}
+
+\item 
+\textbf{Faster Context Switching}:
+\begin{itemize}
+\item 
+Switching between threads is faster because they operate within the same process context, whereas processes require switching between separate contexts.
+
+\end{itemize}
+
+\end{enumerate}
+
+\hrulefill
+
+\sfbf{Advantages of Processes Over Threads}
+
+\begin{enumerate}
+\item 
+\textbf{Isolation}:
+\begin{itemize}
+\item 
+Processes are isolated from each other, so a crash or failure in one process does not affect others.
+
+\item 
+Example: A crashing thread in a multithreaded server can bring down the entire server process, while in a multiprocess server, only one worker process would fail.
+
+\end{itemize}
+
+\item 
+\textbf{Security}:
+\begin{itemize}
+\item 
+Processes provide better security as their memory is isolated. Threads share the same memory, which could lead to data corruption if not handled carefully.
+
+\end{itemize}
+
+\end{enumerate}
+
+\hrulefill
+
+\sfbf{Which to Use?}
+
+\begin{itemize}
+\item 
+\textbf{Processes}:
+\begin{itemize}
+\item 
+Best for high reliability, where isolation is critical (e.g., browsers, where tabs may run in separate processes to prevent crashes affecting other tabs).
+
+\end{itemize}
+
+\item 
+\textbf{Threads}:
+\begin{itemize}
+\item 
+Best for performance and resource efficiency, especially when tasks are tightly coupled and need shared access to resources (e.g., high-performance servers).
+
+\end{itemize}
+
+\end{itemize}
+
+Both approaches can achieve the given scenarios, but the choice depends on the trade-off between efficiency and isolation.
+
+\section{Describing Concurrent Programs}
+
+\begin{greenbox}
+What information does the CPU register in the PCB generally store?
+\end{greenbox}
+
+In the \textbf{Process Control Block (PCB)}, the CPU register section stores the \textbf{state of the CPU} at the moment the process is paused (preempted) or switched out. This information is critical for resuming the process later, ensuring continuity in execution. Here's what is generally stored:
+
+\sfbf{1. General-Purpose Registers}
+
+\begin{itemize}
+\item 
+These are the CPU registers used for computation and temporary data storage during execution.
+
+\item 
+Example: In x86 architecture, these include registers like \verb|EAX|, \verb|EBX|, \verb|ECX|, and \verb|EDX|.
+
+\end{itemize}
+
+\sfbf{2. Program Counter (PC)}
+
+\begin{itemize}
+\item 
+Stores the memory address of the \textbf{next instruction} to be executed by the process.
+
+\item 
+Purpose: Ensures that when the process resumes, it continues execution from where it left off.
+
+\end{itemize}
+
+\sfbf{3. Stack Pointer (SP)}
+
+\begin{itemize}
+\item 
+Points to the \textbf{top of the stack} for the process.
+
+\item 
+The stack stores temporary data such as function call parameters, return addresses, and local variables.
+
+\end{itemize}
+
+\sfbf{4. Base Pointer (BP) or Frame Pointer}
+
+\begin{itemize}
+\item 
+Used for managing \textbf{stack frames} during function calls.
+
+\item 
+Helps in accessing function parameters and local variables.
+
+\end{itemize}
+
+\sfbf{5. Status Register (Flags Register)}
+
+\begin{itemize}
+\item 
+Stores information about the current \textbf{state of the CPU} and the process.
+
+\item 
+Includes condition flags (e.g., Zero Flag, Carry Flag) that are used for decision-making in conditional operations.
+
+\end{itemize}
+
+\sfbf{6. Instruction Register (IR)}
+
+\begin{itemize}
+\item 
+Holds the \textbf{current instruction} being executed by the process.
+
+\item 
+Used to store the operation code and operands during execution.
+
+\end{itemize}
+
+\sfbf{7. Control and Index Registers}
+
+\begin{itemize}
+\item 
+These are specialized registers depending on the architecture:
+\begin{itemize}
+\item 
+\textbf{Control Registers}: Store settings for managing CPU modes and interrupt handling.
+
+\item 
+\textbf{Index Registers}: Used for addressing modes in certain architectures (e.g., \verb|SI|, \verb|DI| in x86).
+
+\end{itemize}
+
+\end{itemize}
+
+\sfbf{Why Store This Information in the PCB?}
+
+\begin{itemize}
+\item 
+When a process is preempted, the current state of the CPU registers is saved in the PCB.
+
+\item 
+When the process is scheduled again, the CPU registers are restored from the PCB, allowing the process to resume as if it was never interrupted.
+
+\end{itemize}
+
+\sfbf{Summary of Information in CPU Register Section of PCB:}
+
+\begin{enumerate}
+\item 
+\textbf{General-Purpose Registers}: Temporary data and computation.
+
+\item 
+\textbf{Program Counter}: Address of the next instruction.
+
+\item 
+\textbf{Stack Pointer}: Top of the stack for the process.
+
+\item 
+\textbf{Base Pointer}: Reference for stack frames.
+
+\item 
+\textbf{Status Register}: Flags for process state and conditions.
+
+\item 
+\textbf{Instruction Register}: Current instruction being executed.
+
+\item 
+\textbf{Control and Index Registers}: Architecture-specific information.
+
+\end{enumerate}
+
+This stored information allows the operating system to implement \textbf{context switching}, enabling efficient multitasking and process management.
 
 \end{document}

@@ -11,20 +11,460 @@
 \usepackage{graphicx}
 % Package for code highlighting
 \usepackage{minted}
-
+\usepackage{listings}
 \usepackage{silence}
 \WarningFilter{latex}{UTF8}
 
 \usepackage{xcolor}
 \usepackage{mdframed}
 
-\definecolor{green}{RGB}{230, 252, 238}
+% \definecolor{green}{RGB}{230, 252, 238}
+\definecolor{green}{RGB}{191, 214, 199}
+
 \newmdenv[
 backgroundcolor=green,
 linecolor=green
 ]{greenbox}
 
 \begin{document}
+
+\chapter{Processor Scheduling}
+
+\section{Bank's Algorithm}
+
+\begin{greenbox}
+There are 5 concurrent processes \(P_1\), \(P_2\), \(P_3\), \(P_4\), \(P_5\).
+
+There are 3 types of resources \(R_1\), \(R_2\), \(R_3\) in the shared system.
+
+The number of resources in \(R_1\), \(R_2\), \(R_3\) is 16, 5, 19 respectively.
+
+Let's use Allocated(\(P_n\), a, b, c) to indicate that the number of resources in \(R_1\), \(R_2\), \(R_3\) allocated to process n is a, b, c respectively.
+
+MaxRequire(\(P_n\), x, y, z) indicates that the maximum resource requirement of process n is (x, y, z).
+
+The system status at time \(T_0\) is as follows:
+
+Allocated(\(P_1\),2,1,2)
+
+Allocated(\(P_2\),4,0,2)
+
+Allocated(\(P_3\),4,0,5)
+
+Allocated(\(P_4\),2,0,4)
+
+Allocated(\(P_5\),3,1,4)
+
+MaxRequire(\(P_1\),5,5,9)
+
+MaxRequire(\(P_2\),5,3,6)
+
+MaxRequire(\(P_3\),4,0,11)
+
+MaxRequire(\(P_4\),4,2,5)
+
+MaxRequire(\(P_5\),3,2,4)
+
+The system adopts the banker's algorithm strategy to avoid deadlock.
+
+Please judge whether the state is safe at time \(T_0\).
+\end{greenbox}
+
+
+有5个并发进程\(P_1\), \(P_2\),\(P_3\), \(P_4\),\(P_5\).
+
+共享系统中有三类资源\(R_1\),\(R_2\),\(R_3\).
+
+\(R_1\),\(R_2\),\(R_3\)的资源数分别是16,5,19.
+
+不妨用Allocated(\(P_n\),a,b,c)表示进程n分配到的\(R_1\),\(R_2\),\(R_3\)的资源数量分别为a,b,c.
+
+MaxRequire(\(P_n\),x,y,z)表示进程n的最大资源需求量为(x,y,z).
+
+在\(T_0\)时刻的系统状态如下所示：
+
+（略）
+
+系统采用的银行家算法的策略避免死锁。请你判断\(T_0\)时刻是否处于安全状态。
+
+The \textbf{Banker's Algorithm} is a method used to determine whether a system is in a \textbf{safe state}, meaning that it can allocate resources to all processes in some order without leading to a deadlock.
+
+To check whether the state at \( T_0 \) is safe, let's proceed step by step:
+
+\hrulefill
+
+\subsubsection{Step 1: Calculate Available Resources}
+
+The total resources in the system are:
+\begin{itemize}
+\item 
+\( R_1 = 16 \)
+
+\item 
+\( R_2 = 5 \)
+
+\item 
+\( R_3 = 19 \)
+
+\end{itemize}
+
+The total allocated resources (sum of all allocated resources across processes) are:
+\begin{itemize}
+\item 
+\( \text{Allocated} R_1 = 2+4+4+2+3 = 15 \)
+
+\item 
+\( \text{Allocated} R_2 = 1+0+0+0+1 = 2 \)
+
+\item 
+\( \text{Allocated} R_3 = 2+2+5+4+4 = 17 \)
+
+\end{itemize}
+
+The available resources are:
+\begin{itemize}
+\item 
+\( \text{Available} R_1 = 16 - 15 = 1 \)
+
+\item 
+\( \text{Available} R_2 = 5 - 2 = 3 \)
+
+\item 
+\( \text{Available} R_3 = 19 - 17 = 2 \)
+
+\end{itemize}
+
+So, \textbf{Available = (1, 3, 2)}.
+
+\hrulefill
+
+\subsubsection{Step 2: Calculate Need Matrix}
+
+The \textbf{Need} for each process is calculated as:
+\[
+\text{Need}(P_n) = \text{MaxRequire}(P_n) - \text{Allocated}(P_n)
+\]
+
+\begin{tabular}{l l}
+Process & Need for \( R_1, R_2, R_3 \) \\
+\hline
+\( P_1 \) & \( (5-2, 5-1, 9-2) = (3, 4, 7) \) \\
+\( P_2 \) & \( (5-4, 3-0, 6-2) = (1, 3, 4) \) \\
+\( P_3 \) & \( (4-4, 0-0, 11-5) = (0, 0, 6) \) \\
+\( P_4 \) & \( (4-2, 2-0, 5-4) = (2, 2, 1) \) \\
+\( P_5 \) & \( (3-3, 2-1, 4-4) = (0, 1, 0) \) \\
+\end{tabular}
+
+\hrulefill
+
+\subsubsection{Step 3: Check the Safe Sequence}
+
+We now try to find a sequence in which all processes can complete without exceeding the available resources.
+
+\subsubsection{Iteration 1:}
+\begin{itemize}
+\item 
+Available = \( (1, 3, 2) \)
+
+\item 
+Check each process:
+\begin{itemize}
+\item 
+\( P_1 \): Needs \( (3, 4, 7) \), cannot be satisfied.
+
+\item 
+\( P_2 \): Needs \( (1, 3, 4) \), cannot be satisfied.
+
+\item 
+\( P_3 \): Needs \( (0, 0, 6) \), cannot be satisfied.
+
+\item 
+\( P_4 \): Needs \( (2, 2, 1) \), cannot be satisfied.
+
+\item 
+\( P_5 \): Needs \( (0, 1, 0) \), \textbf{can be satisfied}.
+
+\end{itemize}
+
+\item 
+\( P_5 \) completes. After \( P_5 \) releases its allocated resources \( (3, 1, 4) \), the available resources become:
+[
+(1+3, 3+1, 2+4) = (4, 4, 6)
+]
+
+\end{itemize}
+
+\subsubsection{Iteration 2:}
+\begin{itemize}
+\item 
+Available = \( (4, 4, 6) \)
+
+\item 
+Check each process:
+\begin{itemize}
+\item 
+\( P_1 \): Needs \( (3, 4, 7) \), cannot be satisfied.
+
+\item 
+\( P_2 \): Needs \( (1, 3, 4) \), \textbf{can be satisfied}.
+
+\end{itemize}
+
+\item 
+\( P_2 \) completes. After \( P_2 \) releases its allocated resources \( (4, 0, 2) \), the available resources become:
+[
+(4+4, 4+0, 6+2) = (8, 4, 8)
+]
+
+\end{itemize}
+
+\subsubsection{Iteration 3:}
+\begin{itemize}
+\item 
+Available = \( (8, 4, 8) \)
+
+\item 
+Check each process:
+\begin{itemize}
+\item 
+\( P_1 \): Needs \( (3, 4, 7) \), \textbf{can be satisfied}.
+
+\end{itemize}
+
+\item 
+\( P_1 \) completes. After \( P_1 \) releases its allocated resources \( (2, 1, 2) \), the available resources become:
+[
+(8+2, 4+1, 8+2) = (10, 5, 10)
+]
+
+\end{itemize}
+
+\subsubsection{Iteration 4:}
+\begin{itemize}
+\item 
+Available = \( (10, 5, 10) \)
+
+\item 
+Check each process:
+\begin{itemize}
+\item 
+\( P_3 \): Needs \( (0, 0, 6) \), \textbf{can be satisfied}.
+
+\end{itemize}
+
+\item 
+\( P_3 \) completes. After \( P_3 \) releases its allocated resources \( (4, 0, 5) \), the available resources become:
+[
+(10+4, 5+0, 10+5) = (14, 5, 15)
+]
+
+\end{itemize}
+
+\subsubsection{Iteration 5:}
+\begin{itemize}
+\item 
+Available = \( (14, 5, 15) \)
+
+\item 
+Check each process:
+\begin{itemize}
+\item 
+\( P_4 \): Needs \( (2, 2, 1) \), \textbf{can be satisfied}.
+
+\end{itemize}
+
+\item 
+\( P_4 \) completes. After \( P_4 \) releases its allocated resources \( (2, 0, 4) \), the available resources become:
+[
+(14+2, 5+0, 15+4) = (16, 5, 19)
+]
+
+\end{itemize}
+
+\hrulefill
+
+\subsubsection{Step 4: Conclusion}
+
+All processes can finish in the order \( P_5 \rightarrow P_2 \rightarrow P_1 \rightarrow P_3 \rightarrow P_4 \). Since a safe sequence exists, the system is in a \textbf{safe state} at \( T_0 \).
+
+\section{PV Operation - Chicken and Chef}
+
+\begin{greenbox}
+There is a cage that can hold up to three chickens. Each time the supplier puts a chicken into the cage, if the cage is full, the supplier must wait. Each time the chef takes a chicken out of the cage, if the cage is empty, he must also wait. Assuming that the cage is empty at the initial moment, define a semaphore and initialize it to use PV operations to achieve synchronization and mutual exclusion between the supplier and the chef.
+\end{greenbox}
+
+有一个最多可以装三只鸡的铁笼子。供应商每次向笼子里面放一只鸡，如果笼子是满的，供应商必须等待。 厨师每次从笼子里面取出一只鸡，如果笼子是空的，也必须等待。假设初始时刻笼子是空的，定义信号量并初始化用PV操作实现供应商和厨师之间的同步和互斥.
+
+This scenario is a classic producer-consumer problem where semaphores are used for synchronization and mutual exclusion. Here's how you can define and initialize the semaphores for the given situation:
+
+\subsubsection{Semaphores}
+\begin{enumerate}
+\item 
+\verb|empty|: Tracks the number of empty slots in the cage. Initialize it to 3 (maximum capacity of the cage).
+
+\item 
+\verb|full|: Tracks the number of chickens in the cage. Initialize it to 0 (cage is empty initially).
+
+\item 
+\verb|mutex|: Ensures mutual exclusion while accessing the cage. Initialize it to 1.
+
+\end{enumerate}
+
+\subsubsection{C Code Using PV Operations}
+
+\begin{minted}[frame=lines, fontsize=\normalsize]{c}
+#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <semaphore.h>
+#include <unistd.h>
+
+// Semaphores
+sem_t empty;  // Number of empty slots
+sem_t full;   // Number of chickens in the cage
+sem_t mutex;  // Ensures mutual exclusion
+
+// Supplier function
+void *supplier(void *arg) {
+    while (1) {
+        sem_wait(&empty);      // Wait if there are no empty slots
+        sem_wait(&mutex);      // Enter critical section
+        printf("Supplier puts a chicken in the cage.\n");
+        sem_post(&mutex);      // Exit critical section
+        sem_post(&full);       // Increase the count of full slots
+        sleep(1);              // Simulate time taken to supply
+    }
+    return NULL;
+}
+
+// Chef function
+void *chef(void *arg) {
+    while (1) {
+        sem_wait(&full);       // Wait if there are no chickens
+        sem_wait(&mutex);      // Enter critical section
+        printf("Chef takes a chicken from the cage.\n");
+        sem_post(&mutex);      // Exit critical section
+        sem_post(&empty);      // Increase the count of empty slots
+        sleep(1);              // Simulate time taken to cook
+    }
+    return NULL;
+}
+
+int main() {
+    // Initialize semaphores
+    sem_init(&empty, 0, 3);  // Cage can hold up to 3 chickens
+    sem_init(&full, 0, 0);   // Cage is empty initially
+    sem_init(&mutex, 0, 1);  // Mutex for critical section
+
+    pthread_t supplier_thread, chef_thread;
+
+    // Create threads for supplier and chef
+    pthread_create(&supplier_thread, NULL, supplier, NULL);
+    pthread_create(&chef_thread, NULL, chef, NULL);
+
+    // Wait for threads to finish (they won't, as this runs indefinitely)
+    pthread_join(supplier_thread, NULL);
+    pthread_join(chef_thread, NULL);
+
+    // Destroy semaphores
+    sem_destroy(&empty);
+    sem_destroy(&full);
+    sem_destroy(&mutex);
+
+    return 0;
+}
+\end{minted}
+
+\subsubsection{Explanation}
+\begin{enumerate}
+\item 
+\verb|sem_wait()| (P operation): Decrements the semaphore. If the semaphore's value is zero, the calling thread blocks until it becomes positive.
+
+\item 
+\verb|sem_post()| (V operation): Increments the semaphore and wakes up one of the waiting threads, if any.
+
+\end{enumerate}
+
+\subsubsection{Synchronization Steps}
+\begin{itemize}
+\item 
+The \textbf{supplier}:
+\begin{itemize}
+\item 
+Waits (\verb|sem_wait(&empty)|) until there is at least one empty slot in the cage.
+
+\item 
+Enters the critical section using \verb|mutex| to safely add a chicken to the cage.
+
+\item 
+Signals (\verb|sem_post(&full)|) that a chicken is now available.
+
+\end{itemize}
+
+\item 
+The \textbf{chef}:
+\begin{itemize}
+\item 
+Waits (\verb|sem_wait(&full)|) until there is at least one chicken in the cage.
+
+\item 
+Enters the critical section using \verb|mutex| to safely take a chicken from the cage.
+
+\item 
+Signals (\verb|sem_post(&empty)|) that a slot in the cage is now empty.
+
+\end{itemize}
+
+\end{itemize}
+
+Here is a concise pseudocode for the core part:
+
+\begin{minted}[frame=lines, fontsize=\normalsize]{c}
+// Supplier
+supplier() {
+    while (true) {
+        P(empty);          // Wait for an empty slot
+        P(mutex);          // Enter critical section
+        // Add a chicken to the cage
+        V(mutex);          // Exit critical section
+        V(full);           // Signal a full slot
+    }
+}
+
+// Chef
+chef() {
+    while (true) {
+        P(full);           // Wait for a full slot
+        P(mutex);          // Enter critical section
+        // Take a chicken from the cage
+        V(mutex);          // Exit critical section
+        V(empty);          // Signal an empty slot
+    }
+}
+\end{minted}
+
+\subsubsection{Explanation of Operations}
+\begin{itemize}
+\item 
+\verb|P(semaphore)|: Wait (decrement semaphore).
+
+\item 
+\verb|V(semaphore)|: Signal (increment semaphore).
+
+\end{itemize}
+
+\subsubsection{Semaphores Initialization}
+
+\begin{lstlisting}[language=c]
+// Initialization:
+sem_init(&empty, 0, 3);  // Cage capacity
+sem_init(&full, 0, 0);   // Initially empty
+sem_init(&mutex, 0, 1);  // For mutual exclusion
+\end{lstlisting}
+
+This pseudocode simplifies the logic for synchronization and mutual exclusion.
+
+This approach ensures both synchronization (supplier and chef waiting for their turn) and mutual exclusion (only one thread accessing the cage at a time).
 
 \chapter{Memory Management}
 
