@@ -1,0 +1,320 @@
+\documentclass[a4paper]{article}
+
+% Package for setting up A4 size and margins like Word's default
+\usepackage[a4paper, margin=2.54cm]{geometry}
+
+% Package for Chinese characters
+\usepackage{ctex}
+
+% Package for mathematical formulas
+\usepackage{amsmath}
+\usepackage{graphicx}
+
+\usepackage{listings}
+
+\setcounter{secnumdepth}{3}
+
+% Package for code highlighting
+% pip install Pygments
+% pip install latexminted
+\usepackage{minted}
+
+\usepackage{silence}
+\WarningFilter{latex}{UTF8}
+
+\usepackage{xcolor}
+\usepackage{mdframed}
+
+\definecolor{green}{RGB}{230, 252, 238}
+
+\newmdenv[
+backgroundcolor=green,
+linecolor=green
+]{greenbox}
+
+
+\begin{document}
+
+\section{Mock Exam (X)}
+
+\subsection{Array}
+
+Given an array \verb|nums| and a value \verb|target|, you need to remove all elements whose value is target in-place and return the length of the new array.
+
+给定一个数组\verb|nums|和一个值\verb|target|，你需要原地移除所有值为\verb|target|的元素，并返回新数组的长度。
+
+\begin{minted}[frame=single]{c}
+int removeElement(int *nums, int numsSize, int val)
+{
+    // i will track the position to place the next valid element
+    int i = 0; 
+    for (int j = 0; j < numsSize; j++){
+        if (nums[j] != val){
+            nums[i] = nums[j];
+            i++;
+        }
+    }
+    // i is now the length of the array without the target values
+    return i; 
+}
+\end{minted}
+
+\subsection{Array - removeElement}
+
+Given an ordered array \verb|nums|, please delete the repeated elements in place so that each element appears only once, and finally return the length of the new array. Requirement: Do not use extra array space.
+
+给定一个有序数组\verb|nums|。请你原地删除重复出现的元素，使每个元素只出现一次，并最终返回新数组的长度。要求: 不使用额外的数组空间。
+
+\begin{minted}[frame=single]{c}
+int removeElement(int* nums, int numsSize, int val) {
+	// i will track the position to place the next valid element
+    int i = 0;
+    for (int j = 0; j < numsSize; j++) {
+        if (nums[j] != val) {
+            nums[i] = nums[j];
+            i++;
+        }
+    }
+    // i is now the length of the array without the target values
+    return i;
+}
+\end{minted}
+
+\newpage
+
+\subsection{Stack - longestValidBracketSubstring}
+
+Given a string containing only "(" and ")", find the length of the longest valid bracket substring. Valid means that the format is correct and continuous. Design the algorithm using the stack idea.
+
+给你一个只包含“(”和“)”的字符串，找出最长有效括号子串的长度。有效的意思格式正确且连续。用栈的思想设计算法。
+
+\begin{minted}[frame=single]{c}
+int longestValidBracketSubstring(const char *s) {
+    int maxLength = 0;
+    int n = strlen(s);
+
+    // Stack to store indices of unmatched brackets
+    int *stack = (int *)malloc((n + 1) * sizeof(int));
+    int top = -1;
+
+    // Push a base index for valid substrings
+    stack[++top] = -1;
+
+    for (int i = 0; i < n; i++) {
+        if (s[i] == '(') {
+            // Push the index of the '(' onto the stack
+            stack[++top] = i;
+        } else { // s[i] == ')'
+            // Pop the last unmatched '('
+            if (top > 0) {
+                top--;
+                // Calculate the valid substring length
+                int length = i - stack[top];
+                if (length > maxLength) {
+                    maxLength = length;
+                }
+            } else {
+                // Push the current index as a base
+                // for the next valid substring
+                stack[top] = i;
+            }
+        }
+    }
+
+    free(stack);
+    return maxLength;
+}
+\end{minted}
+
+\newpage
+
+\subsection{Matrix}
+
+Design an algorithm to determine whether the elements of a matrix are unique.
+
+设计一个算法，判断一个矩阵的元素是否互不相同。
+
+\subsubsection{Efficient Solution}
+\begin{minted}[frame=single]{c}
+#include <stdbool.h>
+
+bool areElementsUnique(int** matrix, int rows, int cols) {
+	// Example for bounded integer elements (-range to +range)
+    int range = 10000;
+    bool seen[2 * 10000 + 1] = {false}; // Array to track seen elements
+    
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            int value = matrix[i][j] + range;// Shift to handle negatives
+            if (seen[value]) {
+                return false; // Duplicate found
+            }
+            seen[value] = true;
+        }
+    }
+    return true; // All elements are unique
+}
+\end{minted}
+
+\subsubsection{In-place Solution}
+
+\begin{minted}[frame=single]{c}
+#include <stdlib.h>
+
+// Comparison function for sorting
+int compare(const void* a, const void* b) {
+    return (*(int*)a - *(int*)b);
+}
+
+bool areElementsUniqueInPlace(int* matrix, int size) {
+    qsort(matrix, size, sizeof(int), compare);
+    for (int i = 1; i < size; i++) {
+        if (matrix[i] == matrix[i - 1]) {
+            return false; // Duplicate found
+        }
+    }
+    return true; // All elements are unique
+}
+\end{minted}
+
+\newpage
+
+\subsection{Tree - isCompleteBinaryTree}
+
+Design an algorithm to determine whether a binary tree is a complete binary tree.
+
+设计一个算法，判断一棵二叉树是否为完全二叉树。
+
+\begin{minted}[frame=single]{c}
+bool isCompleteBinaryTree(Node *root) {
+    if (root == NULL) {
+        return true;  // An empty tree is complete
+    }
+    // Create a large enough queue (assuming max nodes)
+    // For simplicity, assume we won't exceed this size.
+    // In practice, you might dynamically allocate based on tree size.
+    Queue *queue = createQueue(1024);
+    // Start with the root node
+    enqueue(queue, root);
+
+    bool encounteredNull = false;
+
+    while (!isEmpty(queue)) {
+        Node *current = dequeue(queue);
+        if (current == NULL) {
+            encounteredNull = true;
+        } else {
+            // If we have previously encountered a NULL
+            // and now a non-NULL appears,
+            // this is not a complete tree
+            if (encounteredNull) {
+                // Clean up the queue
+                free(queue->arr);
+                free(queue);
+                return false;
+            }
+            // Enqueue the children regardless of whether they are NULL
+            enqueue(queue, current->left);
+            enqueue(queue, current->right);
+        }
+    }
+    // If we processed all nodes without violation, it's complete
+    free(queue->arr);
+    free(queue);
+    return true;
+}
+\end{minted}
+
+\newpage
+
+\subsection{Tree - Build a Tree by In-order and Post-order}
+
+Use the in-order sequence and post-order sequence of the binary tree to construct a binary tree. Note that the in-order sequence and post-order sequence are stored in an array. In this question, you need to return a constructed binary tree.
+
+使用二叉树的中序序列和后序序列构建一棵二叉树。注意，中序序列和后序序列存储在数组中，本题你需要返回一棵构造好的二叉树。
+
+\begin{minted}[frame=single]{c}
+// Function to find the index of a given value in the in-order array
+int findIndex(int arr[], int start, int end, int value) {
+    for (int i = start; i <= end; i++) {
+        if (arr[i] == value) {
+            return i;
+        }
+    }
+    return -1;  // This should never happen if input arrays are valid
+}
+
+// Recursive function to construct the binary tree
+Node* buildTree(int inorder[], int postorder[],
+	int inorderStart, int inorderEnd, int* postIndex) {
+    // Base case: if there are no elements to construct the tree
+    if (inorderStart > inorderEnd) {
+        return NULL;
+    }
+    // The current node is the last element in postorder sequence
+    int rootValue = postorder[*postIndex];
+    (*postIndex)--;  // Decrease the postIndex as we've used one element
+    // Create the root node
+    Node* root = createNode(rootValue);
+    // Find the index of the root in inorder sequence
+    int inorderIndex = findIndex(inorder, inorderStart, inorderEnd, rootValue);
+
+    // Recursively build the right subtree and left subtree
+    // Build right subtree first
+    // because we are working with post-order (left-right-root)
+    root->right = buildTree(inorder, postorder,
+    		inorderIndex + 1, inorderEnd, postIndex);
+    root->left = buildTree(inorder, postorder,
+    		inorderStart, inorderIndex - 1, postIndex);
+    return root;
+}
+\end{minted}
+
+\newpage
+
+\subsection{Graph}
+
+Assuming the graph is stored in an adjacency matrix, please convert the adjacency matrix into an adjacency list. 
+
+假设图存储在邻接矩阵中，请将邻接矩阵转换为邻接表。
+
+\begin{minted}[frame=single]{c}
+#define MAX_VERTICES 10  // Maximum number of vertices
+
+// Define a node for the adjacency list
+struct Node {
+    int vertex;
+    struct Node* next;
+};
+
+// Define the adjacency list as an array of pointers to Node
+struct AdjacencyList {
+    struct Node* head;
+};
+
+// Function to create a new node
+struct Node* createNode(int vertex) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->vertex = vertex;
+    newNode->next = NULL;
+    return newNode;
+}
+
+// Function to convert adjacency matrix to adjacency list
+void convertMatrixToList(int adjacencyMatrix[MAX_VERTICES][MAX_VERTICES],
+	int vertices, struct AdjacencyList adjacencyList[MAX_VERTICES]) {
+    for (int i = 0; i < vertices; i++) {
+        adjacencyList[i].head = NULL;  // Initialize the list head to NULL
+
+        for (int j = 0; j < vertices; j++) {
+            if (adjacencyMatrix[i][j] == 1) {
+                struct Node* newNode = createNode(j);
+                newNode->next = adjacencyList[i].head;
+                adjacencyList[i].head = newNode;
+            }
+        }
+    }
+}
+\end{minted}
+
+\end{document}
