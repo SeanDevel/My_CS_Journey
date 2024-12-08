@@ -44,18 +44,16 @@ Given an array \verb|nums| and a value \verb|target|, you need to remove all ele
 给定一个数组\verb|nums|和一个值\verb|target|，你需要原地移除所有值为\verb|target|的元素，并返回新数组的长度。
 
 \begin{minted}[frame=single]{c}
-int removeElement(int *nums, int numsSize, int val)
-{
-    // i will track the position to place the next valid element
-    int i = 0; 
-    for (int j = 0; j < numsSize; j++){
-        if (nums[j] != val){
-            nums[i] = nums[j];
-            i++;
-        }
+int removeElement(int *nums, int numsSize, int val) {
+  int i = 0; // i will track the position to place the next valid element
+  for (int j = 0; j < numsSize; j++) {
+    if (nums[j] != val) {
+      nums[i] = nums[j];
+      i++;
     }
-    // i is now the length of the array without the target values
-    return i; 
+  }
+  // i is now the length of the array without the target values
+  return i;
 }
 \end{minted}
 
@@ -66,17 +64,17 @@ Given an ordered array \verb|nums|, please delete the repeated elements in place
 给定一个有序数组\verb|nums|。请你原地删除重复出现的元素，使每个元素只出现一次，并最终返回新数组的长度。要求: 不使用额外的数组空间。
 
 \begin{minted}[frame=single]{c}
-int removeElement(int* nums, int numsSize, int val) {
-	// i will track the position to place the next valid element
-    int i = 0;
-    for (int j = 0; j < numsSize; j++) {
-        if (nums[j] != val) {
-            nums[i] = nums[j];
-            i++;
-        }
+int removeDuplicates(int* nums, int numsSize) {
+  if (numsSize == 0) return 0;  // Handle empty array
+
+  int i = 0;  // Index for the unique elements
+  for (int j = 1; j < numsSize; j++) {
+    if (nums[j] != nums[i]) {  // If a new unique element is found
+      i++;                     // Move to the next position for unique elements
+      nums[i] = nums[j];       // Update the array in place
     }
-    // i is now the length of the array without the target values
-    return i;
+  }
+  return i + 1;  // Length of the array with unique elements
 }
 \end{minted}
 
@@ -89,44 +87,94 @@ Given a string containing only "(" and ")", find the length of the longest valid
 给你一个只包含“(”和“)”的字符串，找出最长有效括号子串的长度。有效的意思格式正确且连续。用栈的思想设计算法。
 
 \begin{minted}[frame=single]{c}
+#include <string.h> // contains `size_t strlen (const char *)`
+#include <stdlib.h> // contains `void *malloc (size_t)`
+
 int longestValidBracketSubstring(const char *s) {
-    int maxLength = 0;
-    int n = strlen(s);
+  int maxLength = 0;
+  int n = strlen(s);
 
-    // Stack to store indices of unmatched brackets
-    int *stack = (int *)malloc((n + 1) * sizeof(int));
-    int top = -1;
+  // Stack to store indices of unmatched brackets
+  int *stack = (int *)malloc((n + 1) * sizeof(int));
+  int top = -1;
 
-    // Push a base index for valid substrings
-    stack[++top] = -1;
+  stack[++top] = -1; // Push a base index for valid substrings
 
-    for (int i = 0; i < n; i++) {
-        if (s[i] == '(') {
-            // Push the index of the '(' onto the stack
-            stack[++top] = i;
-        } else { // s[i] == ')'
-            // Pop the last unmatched '('
-            if (top > 0) {
-                top--;
-                // Calculate the valid substring length
-                int length = i - stack[top];
-                if (length > maxLength) {
-                    maxLength = length;
-                }
-            } else {
-                // Push the current index as a base
-                // for the next valid substring
-                stack[top] = i;
-            }
+  for (int i = 0; i < n; i++) {
+    if (s[i] == '(') {
+      stack[++top] = i; // Push the index of the '(' onto the stack
+    } else {  // s[i] == ')'
+      // Pop the last unmatched '('
+      if (top > 0) {
+        top--;
+        int length = i - stack[top]; // Calculate the valid substring length
+        if (length > maxLength) {
+          maxLength = length;
         }
+      } else {
+        // Push the current index as a base for the next valid substring
+        stack[top] = i;
+      }
     }
-
-    free(stack);
-    return maxLength;
+  }
+  free(stack);
+  return maxLength;
 }
 \end{minted}
 
 \newpage
+
+\subsubsection{Explanation of the Algorithm}
+\begin{enumerate}
+\item 
+\textbf{Stack Usage}:
+\begin{itemize}
+\item 
+The stack stores indices of unmatched brackets.
+
+\item 
+A base index \verb|-1| is initially pushed onto the stack to calculate lengths of valid substrings easily.
+
+\end{itemize}
+
+\item 
+\textbf{Traversal}:
+\begin{itemize}
+\item 
+For each \verb|(|, push its index onto the stack.
+
+\item 
+For each \verb|)|, check if there's a matching \verb|(| by popping the stack:
+\begin{itemize}
+\item 
+If a match is found, calculate the length of the current valid substring using the index difference.
+
+\item 
+If the stack becomes empty, push the current index as the new base index.
+
+\end{itemize}
+
+\end{itemize}
+
+\item 
+\textbf{Time Complexity}:
+\begin{itemize}
+\item 
+The algorithm runs in \(O(n)\) since each character is processed once.
+
+\end{itemize}
+
+\item 
+\textbf{Space Complexity}:
+\begin{itemize}
+\item 
+The space complexity is \(O(n)\) due to the stack storage.
+
+\end{itemize}
+
+\end{enumerate}
+
+This approach ensures an efficient and clean solution using the stack concept.
 
 \subsection{Matrix}
 
@@ -137,29 +185,59 @@ Design an algorithm to determine whether the elements of a matrix are unique.
 \subsubsection{Efficient Solution}
 \begin{minted}[frame=single]{c}
 #include <stdbool.h>
-
 bool areElementsUnique(int** matrix, int rows, int cols) {
-	// Example for bounded integer elements (-range to +range)
-    int range = 10000;
-    bool seen[2 * 10000 + 1] = {false}; // Array to track seen elements
-    
-    for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < cols; j++) {
-            int value = matrix[i][j] + range;// Shift to handle negatives
-            if (seen[value]) {
-                return false; // Duplicate found
-            }
-            seen[value] = true;
-        }
+  int range = 10000;  // Example for bounded integer elements (-range to +range)
+  bool seen[2 * 10000 + 1] = {false};  // Array to track seen elements
+  for (int i = 0; i < rows; i++) {
+    for (int j = 0; j < cols; j++) {
+      int value = matrix[i][j] + range;  // Shift to handle negatives
+      if (seen[value]) {
+        return false;  // Duplicate found
+      }
+      seen[value] = true;
     }
-    return true; // All elements are unique
+  }
+  return true;  // All elements are unique
 }
 \end{minted}
+
+\textbf{Explanation}
+
+\begin{enumerate}
+\item 
+\textbf{Input Matrix:}
+\begin{itemize}
+\item 
+Pass the matrix as a 2D pointer array.
+
+\end{itemize}
+
+\item 
+\textbf{Hashing with Fixed-Size Array:}
+\begin{itemize}
+\item 
+Use a \verb|seen| array to track which values have been encountered.
+
+\item 
+Adjust indices for negative values by shifting the range.
+
+\end{itemize}
+
+\item 
+\textbf{Output:}
+\begin{itemize}
+\item 
+Returns \verb|true| if all elements are unique, otherwise \verb|false|.
+
+\end{itemize}
+
+\end{enumerate}
+
 
 \subsubsection{In-place Solution}
 
 \begin{minted}[frame=single]{c}
-#include <stdlib.h>
+#include <stdlib.h> // contains `qsort`
 
 // Comparison function for sorting
 int compare(const void* a, const void* b) {

@@ -48,5 +48,13 @@
         "typeinfo": "cpp",
         "stdbool.h": "c",
         "stdio.h": "c"
+    },
+    "C_Cpp.clang_format_fallbackStyle": "{ BasedOnStyle: Google, BreakBeforeBraces: Attach }",
+    "editor.defaultFormatter": "ms-vscode.cpptools",
+    "[cpp]": {
+        "editor.defaultFormatter": "ms-vscode.cpptools"
+    },
+    "[c]": {
+        "editor.defaultFormatter": "ms-vscode.cpptools"
     }
 }
