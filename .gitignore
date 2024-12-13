@@ -31,3 +31,9 @@ _minted/
 
 # codes
 *.exe
+
+
+# python GUI
+*.spec
+build/
+dist/
